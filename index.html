@@ -1,8 +1,27 @@
 <!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>EIA VoiceBridge</title>  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs"
-    type="module"></script>  <style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>EIA VoiceBridge</title>  <script> src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs"
+    type="module"></script> async function askRealAI(question, documentText) {
+  const response = await fetch("YOUR_BACKEND_URL/ask-ai", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      question: question,
+      documentText: documentText
+    })
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || "AI request failed");
+  }
+
+  return data.answer;
+} <style>
     * {
       box-sizing: border-box;
       margin: 0;
