@@ -8,20 +8,19 @@
 
   <style>
     * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
       font-family: Arial, sans-serif;
     }
 
     body {
       background: #f4f8f6;
       color: #16352b;
-      line-height: 1.6;
     }
 
     header {
-      background: #0b5d3b;
+      background: #075c3a;
       color: white;
       padding: 18px 6%;
       display: flex;
@@ -30,7 +29,7 @@
     }
 
     .logo {
-      font-size: 22px;
+      font-size: 21px;
       font-weight: bold;
     }
 
@@ -42,23 +41,15 @@
     }
 
     .hero {
-      min-height: 80vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       text-align: center;
-      padding: 50px 20px;
+      padding: 65px 20px;
       background: linear-gradient(135deg, #e8f7ef, #ffffff);
     }
 
-    .hero-content {
-      max-width: 750px;
-    }
-
     .hero h1 {
-      font-size: 48px;
-      margin-bottom: 18px;
-      color: #0b5d3b;
+      font-size: 43px;
+      color: #075c3a;
+      margin-bottom: 15px;
     }
 
     .hero h1 span {
@@ -66,131 +57,158 @@
     }
 
     .hero p {
-      font-size: 19px;
-      color: #4b5f57;
-      margin-bottom: 30px;
+      max-width: 700px;
+      margin: auto;
+      color: #53645d;
+      font-size: 18px;
+      line-height: 1.7;
     }
 
-    .buttons {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      flex-wrap: wrap;
+    .voice-section {
+      padding: 55px 20px;
+      text-align: center;
     }
 
-    .btn {
-      padding: 14px 24px;
-      border-radius: 8px;
-      text-decoration: none;
+    .voice-section h2 {
+      color: #075c3a;
+      margin-bottom: 10px;
+    }
+
+    .voice-section > p {
+      color: #64756d;
+      margin-bottom: 25px;
+    }
+
+    .voice-box {
+      max-width: 650px;
+      margin: auto;
+      background: white;
+      padding: 30px 20px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    label {
+      display: block;
+      text-align: left;
       font-weight: bold;
-      cursor: pointer;
-      border: none;
+      margin-bottom: 8px;
+    }
+
+    select {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #ccd9d3;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      background: white;
       font-size: 15px;
     }
 
-    .primary {
-      background: #0b5d3b;
+    .voice-button {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 50px;
+      background: #075c3a;
       color: white;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
     }
 
-    .secondary {
-      background: white;
-      color: #0b5d3b;
-      border: 2px solid #0b5d3b;
+    .voice-button:active {
+      transform: scale(0.98);
+    }
+
+    .status {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #075c3a;
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 18px;
+      background: #f4f8f6;
+      border-radius: 10px;
+      text-align: left;
+      min-height: 70px;
+    }
+
+    .result-title {
+      font-weight: bold;
+      color: #075c3a;
+      margin-bottom: 8px;
+    }
+
+    .answer {
+      margin-top: 15px;
+      padding: 18px;
+      background: #e8f7ef;
+      border-left: 4px solid #075c3a;
+      border-radius: 8px;
+      text-align: left;
+      display: none;
+    }
+
+    .speak-button {
+      margin-top: 15px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      background: #d49b19;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
     }
 
     .features {
-      padding: 60px 6%;
-      text-align: center;
+      padding: 50px 6%;
       background: white;
+      text-align: center;
     }
 
     .features h2 {
-      color: #0b5d3b;
-      margin-bottom: 35px;
-      font-size: 30px;
+      color: #075c3a;
+      margin-bottom: 30px;
     }
 
     .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 22px;
       max-width: 1000px;
       margin: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 20px;
     }
 
     .card {
-      padding: 28px 20px;
-      border-radius: 12px;
+      padding: 25px 18px;
       background: #f4f8f6;
-      border: 1px solid #dce9e2;
+      border-radius: 12px;
     }
 
     .card .icon {
       font-size: 35px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .card h3 {
+      color: #075c3a;
       margin-bottom: 8px;
-      color: #0b5d3b;
-    }
-
-    .demo {
-      padding: 60px 20px;
-      text-align: center;
-      background: #e8f7ef;
-    }
-
-    .demo h2 {
-      color: #0b5d3b;
-      margin-bottom: 15px;
-    }
-
-    .demo-box {
-      max-width: 650px;
-      margin: 25px auto 0;
-      background: white;
-      padding: 30px;
-      border-radius: 14px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    }
-
-    .demo-box p {
-      margin-bottom: 20px;
-      color: #52635c;
-    }
-
-    .voice-btn {
-      background: #d49b19;
-      color: white;
-      border: none;
-      padding: 15px 25px;
-      border-radius: 50px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .voice-btn:hover {
-      opacity: 0.9;
     }
 
     footer {
-      background: #073d29;
+      background: #063d29;
       color: white;
       text-align: center;
-      padding: 25px;
+      padding: 25px 15px;
       font-size: 14px;
     }
 
     @media (max-width: 600px) {
       .hero h1 {
-        font-size: 36px;
-      }
-
-      .hero p {
-        font-size: 16px;
+        font-size: 35px;
       }
 
       nav {
@@ -202,42 +220,82 @@
 
 <body>
 
-  <!-- Header -->
   <header>
     <div class="logo">🌍 EIA VoiceBridge</div>
 
     <nav>
       <a href="#home">Home</a>
+      <a href="#voice">Voice</a>
       <a href="#features">Features</a>
-      <a href="#demo">Demo</a>
     </nav>
   </header>
 
 
-  <!-- Hero Section -->
   <section class="hero" id="home">
 
-    <div class="hero-content">
+    <h1>
+      Understand EIA.<br>
+      <span>In Your Language.</span>
+    </h1>
 
-      <h1>
-        Understand EIA.<br>
-        <span>In Your Language.</span>
-      </h1>
+    <p>
+      EIA VoiceBridge helps communities understand complex
+      Environmental Impact Assessment information through
+      simple language and voice interaction.
+    </p>
 
-      <p>
-        EIA VoiceBridge is an AI-powered tool that helps communities
-        understand Environmental Impact Assessment documents in
-        simple and accessible language.
-      </p>
+  </section>
 
-      <div class="buttons">
-        <a href="#demo" class="btn primary">
-          🎙️ Try VoiceBridge
-        </a>
 
-        <a href="#features" class="btn secondary">
-          Learn More
-        </a>
+  <section class="voice-section" id="voice">
+
+    <h2>🎙️ Talk to EIA VoiceBridge</h2>
+
+    <p>
+      Ask an environmental question using your voice.
+    </p>
+
+    <div class="voice-box">
+
+      <label for="language">Choose Language</label>
+
+      <select id="language">
+        <option value="en-US">English</option>
+        <option value="ha-NG">Hausa</option>
+      </select>
+
+      <button class="voice-button" onclick="startVoice()">
+        🎙️ Start Voice
+      </button>
+
+      <div class="status" id="status">
+        Ready to listen.
+      </div>
+
+      <div class="result">
+
+        <div class="result-title">
+          Your Question:
+        </div>
+
+        <div id="question">
+          Your spoken question will appear here.
+        </div>
+
+      </div>
+
+      <div class="answer" id="answer">
+
+        <div class="result-title">
+          VoiceBridge Response:
+        </div>
+
+        <div id="answerText"></div>
+
+        <button class="speak-button" onclick="speakAnswer()">
+          🔊 Read Answer Aloud
+        </button>
+
       </div>
 
     </div>
@@ -245,7 +303,6 @@
   </section>
 
 
-  <!-- Features -->
   <section class="features" id="features">
 
     <h2>What VoiceBridge Does</h2>
@@ -256,7 +313,7 @@
         <div class="icon">📄</div>
         <h3>EIA Documents</h3>
         <p>
-          Helps users understand complex Environmental Impact
+          Helps communities understand Environmental Impact
           Assessment information.
         </p>
       </div>
@@ -265,8 +322,7 @@
         <div class="icon">🎙️</div>
         <h3>Voice Interaction</h3>
         <p>
-          Users can interact with the system using their voice
-          instead of typing.
+          Users can ask environmental questions using their voice.
         </p>
       </div>
 
@@ -274,17 +330,16 @@
         <div class="icon">🌐</div>
         <h3>Simple Language</h3>
         <p>
-          Converts technical environmental information into
-          simple and understandable explanations.
+          Complex environmental concepts are explained in simple terms.
         </p>
       </div>
 
       <div class="card">
         <div class="icon">🇳🇬</div>
-        <h3>Local Communities</h3>
+        <h3>Community Focus</h3>
         <p>
-          Designed to make environmental information more
-          accessible to communities in Nigeria.
+          Designed to improve access to environmental information
+          for local communities.
         </p>
       </div>
 
@@ -293,33 +348,6 @@
   </section>
 
 
-  <!-- Demo -->
-  <section class="demo" id="demo">
-
-    <h2>Try the VoiceBridge Prototype</h2>
-
-    <p>
-      Ask a question about an Environmental Impact Assessment.
-    </p>
-
-    <div class="demo-box">
-
-      <p>
-        Example: "What is an Environmental Impact Assessment?"
-      </p>
-
-      <button class="voice-btn" onclick="startVoice()">
-        🎙️ Start Voice
-      </button>
-
-      <p id="message" style="margin-top:20px;"></p>
-
-    </div>
-
-  </section>
-
-
-  <!-- Footer -->
   <footer>
 
     <p>
@@ -331,43 +359,129 @@
 
   <script>
 
+    let lastQuestion = "";
+
     function startVoice() {
 
-      const message = document.getElementById("message");
+      const status = document.getElementById("status");
+      const question = document.getElementById("question");
+      const answer = document.getElementById("answer");
+      const answerText = document.getElementById("answerText");
 
-      if ("webkitSpeechRecognition" in window) {
+      const language =
+        document.getElementById("language").value;
 
-        const recognition = new webkitSpeechRecognition();
+      const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
 
-        recognition.lang = "en-US";
+      if (!SpeechRecognition) {
 
-        recognition.start();
+        status.innerText =
+          "❌ Voice recognition is not supported in this browser.";
 
-        message.innerText = "🎙️ Listening... Speak now.";
+        return;
+      }
 
-        recognition.onresult = function(event) {
+      const recognition = new SpeechRecognition();
 
-          const speech =
-            event.results[0][0].transcript;
+      recognition.lang = language;
 
-          message.innerText =
-            "You said: " + speech;
+      recognition.continuous = false;
 
-        };
+      recognition.interimResults = false;
 
-        recognition.onerror = function() {
+      recognition.start();
 
-          message.innerText =
-            "Sorry, I could not hear you. Please try again.";
+      status.innerText =
+        "🎙️ Listening... Please speak.";
 
-        };
+      recognition.onresult = function(event) {
+
+        lastQuestion =
+          event.results[0][0].transcript;
+
+        question.innerText = lastQuestion;
+
+        status.innerText =
+          "✅ Question received.";
+
+        generateDemoAnswer(lastQuestion, language);
+
+      };
+
+      recognition.onerror = function(event) {
+
+        status.innerText =
+          "❌ I could not hear you. Please try again.";
+
+      };
+
+      recognition.onend = function() {
+
+        if (status.innerText.includes("Listening")) {
+
+          status.innerText =
+            "Ready. Tap the button and try again.";
+
+        }
+
+      };
+
+    }
+
+
+    function generateDemoAnswer(question, language) {
+
+      const answer = document.getElementById("answer");
+
+      const answerText =
+        document.getElementById("answerText");
+
+      answer.style.display = "block";
+
+      if (language === "ha-NG") {
+
+        answerText.innerText =
+          "EIA (Environmental Impact Assessment) hanya ne tantance yadda wani aikin ci gaba zai iya shafar muhalli, mutane, ruwa, iska, ƙasa da halittu kafin a fara aikin.";
 
       } else {
 
-        message.innerText =
-          "Voice recognition is not supported on this browser.";
+        answerText.innerText =
+          "Environmental Impact Assessment (EIA) is a process used to identify and assess how a proposed project may affect the environment, people, water, air, land and living organisms before the project begins.";
 
       }
+
+    }
+
+
+    function speakAnswer() {
+
+      const text =
+        document.getElementById("answerText").innerText;
+
+      const language =
+        document.getElementById("language").value;
+
+      if (!("speechSynthesis" in window)) {
+
+        alert("Text-to-speech is not supported on this browser.");
+
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+
+      const speech =
+        new SpeechSynthesisUtterance(text);
+
+      speech.lang = language;
+
+      speech.rate = 0.9;
+
+      speech.pitch = 1;
+
+      window.speechSynthesis.speak(speech);
 
     }
 
