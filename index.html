@@ -1,27 +1,13 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>EIA VoiceBridge</title>  <script> src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs"
-    type="module"></script> async function askRealAI(question, documentText) {
-  const response = await fetch("YOUR_BACKEND_URL/ask-ai", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      question: question,
-      documentText: documentText
-    })
-  });
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  const data = await response.json();
+  <title>EIA VoiceBridge</title>
 
-  if (!response.ok) {
-    throw new Error(data.error || "AI request failed");
-  }
-
-  return data.answer;
-} <style>
+  <style>
     * {
       box-sizing: border-box;
       margin: 0;
@@ -263,7 +249,8 @@
       margin-top: 20px;
     }
 
-    .search-box input {
+    .search-box input,
+    .question-input {
       width: 100%;
       padding: 13px;
       border: 1px solid #ccd9d3;
@@ -326,6 +313,22 @@
       background: #a34828;
     }
 
+    .ask-button {
+      margin-top: 15px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      background: #075c3a;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .ask-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
     .status {
       text-align: center;
       margin-top: 18px;
@@ -347,7 +350,7 @@
     }
 
     .answer {
-      margin-top: 18px;
+      margin-top: 20px;
       padding: 18px;
       background: #e8f7ef;
       border-left: 4px solid #075c3a;
@@ -355,8 +358,15 @@
       display: none;
     }
 
-    .speak-button,
-    .ask-button {
+    .answer.loading {
+      opacity: 0.75;
+    }
+
+    #answerText {
+      white-space: pre-wrap;
+    }
+
+    .speak-button {
       margin-top: 15px;
       padding: 11px 18px;
       border: none;
@@ -365,10 +375,6 @@
       color: white;
       font-weight: bold;
       cursor: pointer;
-    }
-
-    .ask-button {
-      background: #075c3a;
     }
 
     .features {
@@ -479,903 +485,1278 @@
         font-size: 26px;
       }
     }
-  </style></head><body><header>
-  <div class="logo">🌍 EIA VoiceBridge</div>  <nav>
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">🌍 EIA VoiceBridge</div>
+
+  <nav>
     <a href="#home">Home</a>
     <a href="#documents">Documents</a>
     <a href="#voice">Voice</a>
     <a href="#features">Features</a>
   </nav>
-</header><section class="hero" id="home">  <div class="hero-content"><div class="badge">
-  🌱 Environmental Information for Everyone
-</div>
+</header>
 
-<h1>
-  Understand EIA.<br>
-  <span>In Your Language.</span>
-</h1>
 
-<p>
-  EIA VoiceBridge helps communities understand complex
-  Environmental Impact Assessment information using
-  documents, simple explanations and voice interaction.
-</p>
+<!-- HERO -->
 
-<div class="hero-buttons">
+<section class="hero" id="home">
 
-  <a href="#documents" class="btn btn-primary">
-    📄 Upload EIA
-  </a>
+  <div class="hero-content">
 
-  <a href="#voice" class="btn btn-secondary">
-    🎙️ Use Voice
-  </a>
+    <div class="badge">
+      🌱 Environmental Information for Everyone
+    </div>
 
-</div>
+    <h1>
+      Understand EIA.<br>
+      <span>In Your Language.</span>
+    </h1>
 
-  </div></section><section class="document-section" id="documents">  <h2 class="section-title">
+    <p>
+      EIA VoiceBridge helps communities understand complex
+      Environmental Impact Assessment information using
+      documents, simple explanations and voice interaction.
+    </p>
+
+    <div class="hero-buttons">
+
+      <a href="#documents" class="btn btn-primary">
+        📄 Upload EIA
+      </a>
+
+      <a href="#voice" class="btn btn-secondary">
+        🎙️ Use Voice
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- DOCUMENT SECTION -->
+
+<section class="document-section" id="documents">
+
+  <h2 class="section-title">
     📄 Upload an EIA Document
-  </h2>  <p class="section-description">
+  </h2>
+
+  <p class="section-description">
     Upload an Environmental Impact Assessment PDF.
-    VoiceBridge will extract the text and help you explore
-    environmental information in a simpler way.
-  </p>  <div class="upload-box"><div class="upload-icon">📑</div>
-
-<h3>Choose an EIA PDF</h3>
-
-<p>Supported format: PDF</p>
-
-<label for="pdfInput" class="file-label">
-  📤 Choose PDF
-</label>
-
-<input
-  type="file"
-  id="pdfInput"
-  accept="application/pdf"
->
-
-<div class="file-name" id="fileName">
-  No document selected
-</div>
-
-<div class="document-status" id="documentStatus">
-  Ready to receive your document.
-</div>
-
-<div class="progress-container" id="progressContainer">
-
-  <div class="progress-bar">
-    <div class="progress" id="progress"></div>
-  </div>
-
-</div>
-
-  </div>  <div class="document-result" id="documentResult"><div class="result-card">
-
-  <h3>📋 Document Information</h3>
-
-  <p id="documentInfo">
-    Document information will appear here.
+    VoiceBridge will extract the text and allow the AI
+    to use relevant information when answering questions.
   </p>
 
-</div>
+  <div class="upload-box">
 
-<div class="result-card">
+    <div class="upload-icon">📑</div>
 
-  <h3>🌱 EIA Community Overview</h3>
+    <h3>Choose an EIA PDF</h3>
 
-  <div class="summary-text" id="summaryText">
-    Your document explanation will appear here.
+    <p>Supported format: PDF</p>
+
+    <label for="pdfInput" class="file-label">
+      📤 Choose PDF
+    </label>
+
+    <input
+      type="file"
+      id="pdfInput"
+      accept="application/pdf"
+    >
+
+    <div class="file-name" id="fileName">
+      No document selected
+    </div>
+
+    <div class="document-status" id="documentStatus">
+      Ready to receive your document.
+    </div>
+
+    <div class="progress-container" id="progressContainer">
+
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
+
+    </div>
+
   </div>
 
-</div>
 
-<div class="result-card">
+  <div class="document-result" id="documentResult">
 
-  <h3>🔎 Search Your EIA Document</h3>
+    <div class="result-card">
 
-  <p>
-    Search for a word such as water, pollution,
-    community, mitigation, soil or biodiversity.
+      <h3>📋 Document Information</h3>
+
+      <p id="documentInfo">
+        Document information will appear here.
+      </p>
+
+    </div>
+
+
+    <div class="result-card">
+
+      <h3>🌱 EIA Community Overview</h3>
+
+      <div class="summary-text" id="summaryText">
+        Your document explanation will appear here.
+      </div>
+
+    </div>
+
+
+    <div class="result-card">
+
+      <h3>🔎 Search Your EIA Document</h3>
+
+      <p>
+        Search for a word such as water, pollution,
+        community, mitigation, soil or biodiversity.
+      </p>
+
+      <div class="search-box">
+
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Type a word or question..."
+        >
+
+        <button
+          class="ask-button"
+          onclick="searchDocument()"
+        >
+          🔎 Search Document
+        </button>
+
+        <div
+          class="search-result"
+          id="searchResult"
+        ></div>
+
+      </div>
+
+    </div>
+
+
+    <div class="result-card">
+
+      <h3>📖 Extracted Text</h3>
+
+      <div
+        class="extracted-text"
+        id="extractedText"
+      >
+        Extracted document text will appear here.
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- VOICE SECTION -->
+
+<section class="voice-section" id="voice">
+
+  <h2 class="section-title">
+    🎙️ Talk to EIA VoiceBridge
+  </h2>
+
+  <p class="section-description">
+    Ask an environmental question using your voice or
+    type your question below. VoiceBridge can use the
+    uploaded EIA document when answering.
   </p>
 
-  <div class="search-box">
+
+  <div class="voice-box">
+
+    <label for="language">
+      Choose Language
+    </label>
+
+    <select id="language">
+
+      <option value="en-US">
+        🇬🇧 English
+      </option>
+
+      <option value="ha-NG">
+        🇳🇬 Hausa
+      </option>
+
+    </select>
+
+
+    <!-- TEXT QUESTION -->
+
+    <label for="textQuestion">
+      Ask a Question
+    </label>
 
     <input
       type="text"
-      id="searchInput"
-      placeholder="Type a word or question..."
+      id="textQuestion"
+      class="question-input"
+      placeholder="Ask about water, pollution, health, mitigation..."
     >
 
     <button
       class="ask-button"
-      onclick="searchDocument()"
+      id="textAskButton"
+      onclick="askTypedQuestion()"
     >
-      🔎 Search Document
+      🤖 Ask AI
     </button>
 
-    <div
-      class="search-result"
-      id="searchResult"
-    ></div>
+
+    <!-- VOICE -->
+
+    <button
+      class="voice-button"
+      id="voiceButton"
+      onclick="startVoice()"
+      style="margin-top:15px;"
+    >
+      🎙️ Start Voice
+    </button>
+
+
+    <div class="status" id="status">
+      Ready to listen.
+    </div>
+
+
+    <div class="result">
+
+      <div class="result-title">
+        Your Question
+      </div>
+
+      <div id="question">
+        Your question will appear here.
+      </div>
+
+    </div>
+
+
+    <div class="answer" id="answer">
+
+      <div class="result-title">
+        🤖 VoiceBridge AI Response
+      </div>
+
+      <div id="answerText"></div>
+
+      <button
+        class="speak-button"
+        onclick="speakAnswer()"
+      >
+        🔊 Read Answer Aloud
+      </button>
+
+    </div>
 
   </div>
 
-</div>
+</section>
 
-<div class="result-card">
 
-  <h3>📖 Extracted Text</h3>
+<!-- FEATURES -->
 
-  <div
-    class="extracted-text"
-    id="extractedText"
-  >
-    Extracted document text will appear here.
-  </div>
+<section class="features" id="features">
 
-</div>
-
-  </div></section><section class="voice-section" id="voice">  <h2 class="section-title">
-    🎙️ Talk to EIA VoiceBridge
-  </h2>  <p class="section-description">
-    Ask an environmental question using your voice.
-    If an EIA document has been uploaded, VoiceBridge
-    can search the extracted document for relevant information.
-  </p>  <div class="voice-box"><label for="language">
-  Choose Language
-</label>
-
-<select id="language">
-
-  <option value="en-US">
-    🇬🇧 English
-  </option>
-
-  <option value="ha-NG">
-    🇳🇬 Hausa
-  </option>
-
-</select>
-
-<button
-  class="voice-button"
-  id="voiceButton"
-  onclick="startVoice()"
->
-  🎙️ Start Voice
-</button>
-
-<div class="status" id="status">
-  Ready to listen.
-</div>
-
-<div class="result">
-
-  <div class="result-title">
-    Your Question
-  </div>
-
-  <div id="question">
-    Your spoken question will appear here.
-  </div>
-
-</div>
-
-<div class="answer" id="answer">
-
-  <div class="result-title">
-    VoiceBridge Response
-  </div>
-
-  <div id="answerText"></div>
-
-  <button
-    class="speak-button"
-    onclick="speakAnswer()"
-  >
-    🔊 Read Answer Aloud
-  </button>
-
-</div>
-
-  </div></section><section class="features" id="features">  <h2 class="section-title">
+  <h2 class="section-title">
     What VoiceBridge Does
-  </h2>  <p class="section-description">
+  </h2>
+
+  <p class="section-description">
     Built to make environmental information easier
     to understand and access.
-  </p>  <div class="cards"><div class="card">
-  <div class="card-icon">📄</div>
-
-  <h3>EIA Documents</h3>
-
-  <p>
-    Upload EIA documents and extract useful information.
   </p>
-</div>
 
-<div class="card">
-  <div class="card-icon">🎙️</div>
+  <div class="cards">
 
-  <h3>Voice Interaction</h3>
+    <div class="card">
+      <div class="card-icon">📄</div>
 
-  <p>
-    Ask environmental questions using your voice.
-  </p>
-</div>
+      <h3>EIA Documents</h3>
 
-<div class="card">
-  <div class="card-icon">🔎</div>
+      <p>
+        Upload EIA documents and extract useful information.
+      </p>
+    </div>
 
-  <h3>Document Search</h3>
 
-  <p>
-    Search extracted EIA information for important topics.
-  </p>
-</div>
+    <div class="card">
+      <div class="card-icon">🎙️</div>
 
-<div class="card">
-  <div class="card-icon">🌐</div>
+      <h3>Voice Interaction</h3>
 
-  <h3>Simple Language</h3>
+      <p>
+        Ask environmental questions using your voice.
+      </p>
+    </div>
 
-  <p>
-    Make technical environmental information easier
-    for communities to understand.
-  </p>
-</div>
 
-<div class="card">
-  <div class="card-icon">🇳🇬</div>
+    <div class="card">
+      <div class="card-icon">🤖</div>
 
-  <h3>Community Focus</h3>
+      <h3>AI Answers</h3>
 
-  <p>
-    Designed with Nigerian communities and local
-    accessibility in mind.
-  </p>
-</div>
+      <p>
+        Get simple AI explanations based on your question
+        and uploaded EIA information.
+      </p>
+    </div>
 
-  </div></section><section>  <h2 class="section-title">
+
+    <div class="card">
+      <div class="card-icon">🔎</div>
+
+      <h3>Document Search</h3>
+
+      <p>
+        Search extracted EIA information for important topics.
+      </p>
+    </div>
+
+
+    <div class="card">
+      <div class="card-icon">🌐</div>
+
+      <h3>Simple Language</h3>
+
+      <p>
+        Make technical environmental information easier
+        for communities to understand.
+      </p>
+    </div>
+
+
+    <div class="card">
+      <div class="card-icon">🇳🇬</div>
+
+      <h3>Community Focus</h3>
+
+      <p>
+        Designed with Nigerian communities and local
+        accessibility in mind.
+      </p>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- HOW IT WORKS -->
+
+<section>
+
+  <h2 class="section-title">
     How It Works
-  </h2>  <p class="section-description">
+  </h2>
+
+  <p class="section-description">
     A simple path from complex environmental information
     to community understanding.
-  </p>  <div class="steps"><div class="step">
-
-  <div class="step-number">1</div>
-
-  <h3>Upload</h3>
-
-  <p>
-    Upload an EIA document in PDF format.
   </p>
 
-</div>
+  <div class="steps">
 
-<div class="step">
+    <div class="step">
 
-  <div class="step-number">2</div>
+      <div class="step-number">1</div>
 
-  <h3>Extract</h3>
+      <h3>Upload</h3>
+
+      <p>
+        Upload an EIA document in PDF format.
+      </p>
+
+    </div>
+
+
+    <div class="step">
+
+      <div class="step-number">2</div>
+
+      <h3>Extract</h3>
+
+      <p>
+        Important text is extracted from the document.
+      </p>
+
+    </div>
+
+
+    <div class="step">
+
+      <div class="step-number">3</div>
+
+      <h3>Ask</h3>
+
+      <p>
+        Ask questions using English, Hausa or text.
+      </p>
+
+    </div>
+
+
+    <div class="step">
+
+      <div class="step-number">4</div>
+
+      <h3>Understand</h3>
+
+      <p>
+        AI explains environmental information in simpler language.
+      </p>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<footer>
 
   <p>
-    Important text is extracted from the document.
-  </p>
-
-</div>
-
-<div class="step">
-
-  <div class="step-number">3</div>
-
-  <h3>Ask</h3>
-
-  <p>
-    Ask questions using English or Hausa voice.
-  </p>
-
-</div>
-
-<div class="step">
-
-  <div class="step-number">4</div>
-
-  <h3>Understand</h3>
-
-  <p>
-    Explore environmental information in a simpler form.
-  </p>
-
-</div>
-
-  </div></section><footer>  <p>
     © 2026 EIA VoiceBridge
-  </p>  <p class="footer-small">
+  </p>
+
+  <p class="footer-small">
     Making Environmental Information More Accessible.
-  </p></footer><script type="module">
+  </p>
 
-import * as pdfjsLib from
-"https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs";
-
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-"https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs";
-
-const pdfInput =
-document.getElementById("pdfInput");
-
-const fileName =
-document.getElementById("fileName");
-
-const documentStatus =
-document.getElementById("documentStatus");
-
-const progressContainer =
-document.getElementById("progressContainer");
-
-const progress =
-document.getElementById("progress");
-
-const documentResult =
-document.getElementById("documentResult");
-
-const documentInfo =
-document.getElementById("documentInfo");
-
-const summaryText =
-document.getElementById("summaryText");
-
-const extractedText =
-document.getElementById("extractedText");
-
-let documentText = "";
+</footer>
 
 
-/* PDF UPLOAD */
+<!-- PDF.JS + APPLICATION JAVASCRIPT -->
 
-pdfInput.addEventListener("change", async function () {
+<script type="module">
 
-  const file = this.files[0];
+  import * as pdfjsLib from
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs";
 
-  if (!file) {
-    return;
-  }
 
-  if (file.type !== "application/pdf") {
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs";
 
-    documentStatus.innerText =
-      "❌ Please select a PDF document.";
 
-    return;
-  }
+  /*
+    IMPORTANT:
+    Replace the value below with the public URL
+    of your Railway backend.
 
-  fileName.innerText =
-    "📄 " + file.name;
+    Example:
+    https://your-project.up.railway.app
+  */
 
-  documentStatus.innerText =
-    "Preparing your EIA document...";
+  const BACKEND_URL = "YOUR_RAILWAY_BACKEND_URL";
 
-  progressContainer.style.display =
-    "block";
 
-  progress.style.width =
-    "10%";
+  /* AI FUNCTION */
 
-  try {
+  async function askRealAI(question, documentText, language) {
 
-    const arrayBuffer =
-      await file.arrayBuffer();
+    const response = await fetch(
+      BACKEND_URL + "/ask-ai",
+      {
+        method: "POST",
 
-    progress.style.width =
-      "25%";
+        headers: {
+          "Content-Type": "application/json"
+        },
 
-    const pdf =
-      await pdfjsLib.getDocument({
-        data: arrayBuffer
-      }).promise;
+        body: JSON.stringify({
 
-    progress.style.width =
-      "40%";
+          question: question,
 
-    let fullText = "";
+          documentText: documentText || "",
 
-    const maxPages =
-      Math.min(pdf.numPages, 30);
+          language: language
 
-    for (
-      let pageNumber = 1;
-      pageNumber <= maxPages;
-      pageNumber++
-    ) {
+        })
+      }
+    );
 
-      const page =
-        await pdf.getPage(pageNumber);
 
-      const textContent =
-        await page.getTextContent();
+    let data;
 
-      const pageText =
-        textContent.items
-          .map(item => item.str)
-          .join(" ");
+    try {
 
-      fullText +=
-        "\n\n--- Page " +
-        pageNumber +
-        " ---\n\n" +
-        pageText;
+      data = await response.json();
 
-      const percent =
-        40 +
-        Math.round(
-          (pageNumber / maxPages) * 45
-        );
+    } catch (error) {
 
-      progress.style.width =
-        percent + "%";
+      throw new Error(
+        "The backend returned an invalid response."
+      );
+
     }
 
-    const cleanText =
-      fullText.trim();
 
-    if (!cleanText) {
+    if (!response.ok) {
+
+      throw new Error(
+        data.error || "AI request failed."
+      );
+
+    }
+
+
+    if (!data.answer) {
+
+      throw new Error(
+        "The AI did not return an answer."
+      );
+
+    }
+
+
+    return data.answer;
+
+  }
+
+
+  /* PDF ELEMENTS */
+
+  const pdfInput =
+    document.getElementById("pdfInput");
+
+  const fileName =
+    document.getElementById("fileName");
+
+  const documentStatus =
+    document.getElementById("documentStatus");
+
+  const progressContainer =
+    document.getElementById("progressContainer");
+
+  const progress =
+    document.getElementById("progress");
+
+  const documentResult =
+    document.getElementById("documentResult");
+
+  const documentInfo =
+    document.getElementById("documentInfo");
+
+  const summaryText =
+    document.getElementById("summaryText");
+
+  const extractedText =
+    document.getElementById("extractedText");
+
+
+  let documentText = "";
+
+
+  /* PDF UPLOAD */
+
+  pdfInput.addEventListener(
+    "change",
+    async function () {
+
+      const file = this.files[0];
+
+      if (!file) {
+        return;
+      }
+
+
+      if (file.type !== "application/pdf") {
+
+        documentStatus.innerText =
+          "❌ Please select a PDF document.";
+
+        return;
+      }
+
+
+      fileName.innerText =
+        "📄 " + file.name;
+
 
       documentStatus.innerText =
-        "⚠️ No selectable text was found. This PDF may be scanned as images.";
+        "Preparing your EIA document...";
+
+
+      progressContainer.style.display =
+        "block";
+
 
       progress.style.width =
-        "0%";
+        "10%";
 
-      return;
+
+      try {
+
+        const arrayBuffer =
+          await file.arrayBuffer();
+
+
+        progress.style.width =
+          "25%";
+
+
+        const pdf =
+          await pdfjsLib.getDocument({
+            data: arrayBuffer
+          }).promise;
+
+
+        progress.style.width =
+          "40%";
+
+
+        let fullText = "";
+
+
+        const maxPages =
+          Math.min(pdf.numPages, 30);
+
+
+        for (
+          let pageNumber = 1;
+          pageNumber <= maxPages;
+          pageNumber++
+        ) {
+
+          const page =
+            await pdf.getPage(pageNumber);
+
+
+          const textContent =
+            await page.getTextContent();
+
+
+          const pageText =
+            textContent.items
+              .map(item => item.str)
+              .join(" ");
+
+
+          fullText +=
+            "\n\n--- Page " +
+            pageNumber +
+            " ---\n\n" +
+            pageText;
+
+
+          const percent =
+            40 +
+            Math.round(
+              (pageNumber / maxPages) * 45
+            );
+
+
+          progress.style.width =
+            percent + "%";
+
+        }
+
+
+        const cleanText =
+          fullText.trim();
+
+
+        if (!cleanText) {
+
+          documentStatus.innerText =
+            "⚠️ No selectable text was found. This PDF may be scanned as images.";
+
+          progress.style.width =
+            "0%";
+
+          return;
+
+        }
+
+
+        documentText =
+          cleanText;
+
+
+        documentInfo.innerText =
+          "File: " +
+          file.name +
+          " | Pages: " +
+          pdf.numPages +
+          " | Pages processed: " +
+          maxPages;
+
+
+        extractedText.innerText =
+          cleanText.substring(0, 15000);
+
+
+        createSimpleSummary(cleanText);
+
+
+        documentResult.style.display =
+          "block";
+
+
+        progress.style.width =
+          "100%";
+
+
+        documentStatus.innerText =
+          "✅ Document processed successfully.";
+
+      }
+
+      catch (error) {
+
+        console.error(error);
+
+
+        documentStatus.innerText =
+          "❌ Something went wrong while reading the PDF.";
+
+
+        progress.style.width =
+          "0%";
+
+      }
+
     }
-
-    documentText =
-      cleanText;
-
-    documentInfo.innerText =
-      "File: " +
-      file.name +
-      " | Pages: " +
-      pdf.numPages +
-      " | Pages processed: " +
-      maxPages;
-
-    extractedText.innerText =
-      cleanText.substring(0, 15000);
-
-    createSimpleSummary(cleanText);
-
-    documentResult.style.display =
-      "block";
-
-    progress.style.width =
-      "100%";
-
-    documentStatus.innerText =
-      "✅ Document processed successfully.";
-
-  } catch (error) {
-
-    console.error(error);
-
-    documentStatus.innerText =
-      "❌ Something went wrong while reading the PDF.";
-
-    progress.style.width =
-      "0%";
-  }
-
-});
-
-
-/* SIMPLE EIA SUMMARY */
-
-function createSimpleSummary(text) {
-
-  const lower =
-    text.toLowerCase();
-
-  let findings = [];
-
-  if (
-    lower.includes("water") ||
-    lower.includes("hydrology")
-  ) {
-
-    findings.push(
-      "💧 Water: The document contains information related to water resources or possible water impacts."
-    );
-  }
-
-  if (
-    lower.includes("air quality") ||
-    lower.includes("air pollution") ||
-    lower.includes("emission")
-  ) {
-
-    findings.push(
-      "🌬️ Air: The document discusses air quality, emissions or possible air pollution."
-    );
-  }
-
-  if (
-    lower.includes("soil") ||
-    lower.includes("land")
-  ) {
-
-    findings.push(
-      "🌱 Soil/Land: The document contains information about soil or land impacts."
-    );
-  }
-
-  if (
-    lower.includes("noise")
-  ) {
-
-    findings.push(
-      "🔊 Noise: Noise impacts or noise-related environmental issues are mentioned."
-    );
-  }
-
-  if (
-    lower.includes("biodiversity") ||
-    lower.includes("wildlife") ||
-    lower.includes("vegetation")
-  ) {
-
-    findings.push(
-      "🐾 Biodiversity: The document contains information about biodiversity, wildlife or vegetation."
-    );
-  }
-
-  if (
-    lower.includes("community") ||
-    lower.includes("stakeholder")
-  ) {
-
-    findings.push(
-      "👥 Community: Community or stakeholder involvement is discussed."
-    );
-  }
-
-  if (
-    lower.includes("mitigation")
-  ) {
-
-    findings.push(
-      "🛡️ Mitigation: The document contains measures intended to reduce environmental impacts."
-    );
-  }
-
-  if (findings.length === 0) {
-
-    findings.push(
-      "The document has been read successfully, but no major EIA category was detected by this prototype."
-    );
-  }
-
-  summaryText.innerText =
-    "Initial community-friendly overview:\n\n" +
-    findings.join("\n\n") +
-    "\n\n⚠️ This is a prototype overview, not a professional EIA assessment or regulatory decision.";
-}
-
-
-/* DOCUMENT SEARCH */
-
-window.searchDocument =
-function () {
-
-  const input =
-    document.getElementById(
-      "searchInput"
-    );
-
-  const searchResult =
-    document.getElementById(
-      "searchResult"
-    );
-
-  const term =
-    input.value.trim().toLowerCase();
-
-  if (!documentText) {
-
-    searchResult.style.display =
-      "block";
-
-    searchResult.innerText =
-      "⚠️ Please upload an EIA PDF first.";
-
-    return;
-  }
-
-  if (!term) {
-
-    searchResult.style.display =
-      "block";
-
-    searchResult.innerText =
-      "Please enter a word or question.";
-
-    return;
-  }
-
-  const words =
-    term.split(/\s+/);
-
-  const sentences =
-    documentText
-      .split(/[.!?]+/)
-      .filter(sentence => {
-
-        const sentenceLower =
-          sentence.toLowerCase();
-
-        return words.some(word =>
-          word.length > 2 &&
-          sentenceLower.includes(word)
-        );
-
-      })
-      .slice(0, 5);
-
-  searchResult.style.display =
-    "block";
-
-  if (sentences.length === 0) {
-
-    searchResult.innerText =
-      "No matching information was found in the extracted text.";
-
-    return;
-  }
-
-  searchResult.innerText =
-    "🔎 Relevant information found:\n\n" +
-    sentences.join(".\n\n");
-};
-
-
-/* VOICE RECOGNITION */
-
-window.startVoice =
-function () {
-
-  const status =
-    document.getElementById("status");
-
-  const question =
-    document.getElementById("question");
-
-  const voiceButton =
-    document.getElementById("voiceButton");
-
-  const language =
-    document.getElementById("language").value;
-
-  const SpeechRecognition =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
-
-  if (!SpeechRecognition) {
-
-    status.innerText =
-      "❌ Voice recognition is not supported in this browser.";
-
-    return;
-  }
-
-  const recognition =
-    new SpeechRecognition();
-
-  recognition.lang =
-    language;
-
-  recognition.continuous =
-    false;
-
-  recognition.interimResults =
-    false;
-
-  voiceButton.classList.add(
-    "listening"
   );
 
-  voiceButton.innerText =
-    "🎙️ Listening...";
 
-  status.innerText =
-    "Please speak now.";
+  /* SIMPLE EIA SUMMARY */
 
-  recognition.start();
+  function createSimpleSummary(text) {
 
-  recognition.onresult =
-    function(event) {
+    const lower =
+      text.toLowerCase();
 
-      const spokenQuestion =
-        event.results[0][0].transcript;
 
-      question.innerText =
-        spokenQuestion;
+    let findings = [];
+
+
+    if (
+      lower.includes("water") ||
+      lower.includes("hydrology")
+    ) {
+
+      findings.push(
+        "💧 Water: The document contains information related to water resources or possible water impacts."
+      );
+
+    }
+
+
+    if (
+      lower.includes("air quality") ||
+      lower.includes("air pollution") ||
+      lower.includes("emission")
+    ) {
+
+      findings.push(
+        "🌬️ Air: The document discusses air quality, emissions or possible air pollution."
+      );
+
+    }
+
+
+    if (
+      lower.includes("soil") ||
+      lower.includes("land")
+    ) {
+
+      findings.push(
+        "🌱 Soil/Land: The document contains information about soil or land impacts."
+      );
+
+    }
+
+
+    if (lower.includes("noise")) {
+
+      findings.push(
+        "🔊 Noise: Noise impacts or noise-related environmental issues are mentioned."
+      );
+
+    }
+
+
+    if (
+      lower.includes("biodiversity") ||
+      lower.includes("wildlife") ||
+      lower.includes("vegetation")
+    ) {
+
+      findings.push(
+        "🐾 Biodiversity: The document contains information about biodiversity, wildlife or vegetation."
+      );
+
+    }
+
+
+    if (
+      lower.includes("community") ||
+      lower.includes("stakeholder")
+    ) {
+
+      findings.push(
+        "👥 Community: Community or stakeholder involvement is discussed."
+      );
+
+    }
+
+
+    if (lower.includes("mitigation")) {
+
+      findings.push(
+        "🛡️ Mitigation: The document contains measures intended to reduce environmental impacts."
+      );
+
+    }
+
+
+    if (findings.length === 0) {
+
+      findings.push(
+        "The document has been read successfully, but no major EIA category was detected by this prototype."
+      );
+
+    }
+
+
+    summaryText.innerText =
+      "Initial community-friendly overview:\n\n" +
+      findings.join("\n\n") +
+      "\n\n⚠️ This is a prototype overview, not a professional EIA assessment or regulatory decision.";
+
+  }
+
+
+  /* DOCUMENT SEARCH */
+
+  window.searchDocument =
+    function () {
+
+      const input =
+        document.getElementById("searchInput");
+
+
+      const searchResult =
+        document.getElementById("searchResult");
+
+
+      const term =
+        input.value.trim().toLowerCase();
+
+
+      if (!documentText) {
+
+        searchResult.style.display =
+          "block";
+
+
+        searchResult.innerText =
+          "⚠️ Please upload an EIA PDF first.";
+
+        return;
+
+      }
+
+
+      if (!term) {
+
+        searchResult.style.display =
+          "block";
+
+
+        searchResult.innerText =
+          "Please enter a word or question.";
+
+        return;
+
+      }
+
+
+      const words =
+        term.split(/\s+/);
+
+
+      const sentences =
+        documentText
+          .split(/[.!?]+/)
+          .filter(sentence => {
+
+            const sentenceLower =
+              sentence.toLowerCase();
+
+
+            return words.some(word =>
+              word.length > 2 &&
+              sentenceLower.includes(word)
+            );
+
+          })
+          .slice(0, 5);
+
+
+      searchResult.style.display =
+        "block";
+
+
+      if (sentences.length === 0) {
+
+        searchResult.innerText =
+          "No matching information was found in the extracted text.";
+
+        return;
+
+      }
+
+
+      searchResult.innerText =
+        "🔎 Relevant information found:\n\n" +
+        sentences.join(".\n\n");
+
+    };
+
+
+  /* AI ANSWER */
+
+  async function generateAnswer(
+    userQuestion,
+    language
+  ) {
+
+    const answer =
+      document.getElementById("answer");
+
+
+    const answerText =
+      document.getElementById("answerText");
+
+
+    const status =
+      document.getElementById("status");
+
+
+    answer.style.display =
+      "block";
+
+
+    answer.classList.add("loading");
+
+
+    answerText.innerText =
+      language === "ha-NG"
+        ? "🤖 AI na nazarin tambayarka..."
+        : "🤖 AI is analysing your question...";
+
+
+    status.innerText =
+      language === "ha-NG"
+        ? "Ana neman amsa..."
+        : "Getting AI answer...";
+
+
+    try {
+
+      const aiAnswer =
+        await askRealAI(
+          userQuestion,
+          documentText,
+          language
+        );
+
+
+      answerText.innerText =
+        aiAnswer;
+
 
       status.innerText =
-        "✅ Question received.";
+        language === "ha-NG"
+          ? "✅ An samu amsa daga AI."
+          : "✅ AI answer received.";
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+
+      answerText.innerText =
+        language === "ha-NG"
+          ? "❌ An samu matsala wajen haɗa VoiceBridge da AI. Da fatan a duba Railway backend URL."
+          : "❌ There was a problem connecting VoiceBridge to the AI. Please check the Railway backend URL.";
+
+      status.innerText =
+        "❌ AI connection failed.";
+
+    }
+
+    finally {
+
+      answer.classList.remove("loading");
+
+    }
+
+  }
+
+
+  /* TYPED QUESTION */
+
+  window.askTypedQuestion =
+    function () {
+
+      const input =
+        document.getElementById("textQuestion");
+
+
+      const userQuestion =
+        input.value.trim();
+
+
+      const language =
+        document.getElementById("language").value;
+
+
+      if (!userQuestion) {
+
+        document.getElementById("status").innerText =
+          language === "ha-NG"
+            ? "Da fatan ka rubuta tambaya."
+            : "Please type a question.";
+
+        return;
+
+      }
+
+
+      document.getElementById("question").innerText =
+        userQuestion;
+
 
       generateAnswer(
-        spokenQuestion,
+        userQuestion,
         language
       );
 
     };
 
-  recognition.onerror =
-    function() {
 
-      status.innerText =
-        "❌ I could not hear you. Please try again.";
+  /* VOICE RECOGNITION */
 
-    };
+  window.startVoice =
+    function () {
 
-  recognition.onend =
-    function() {
+      const status =
+        document.getElementById("status");
 
-      voiceButton.classList.remove(
+
+      const question =
+        document.getElementById("question");
+
+
+      const voiceButton =
+        document.getElementById("voiceButton");
+
+
+      const language =
+        document.getElementById("language").value;
+
+
+      const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+
+      if (!SpeechRecognition) {
+
+        status.innerText =
+          "❌ Voice recognition is not supported in this browser.";
+
+        return;
+
+      }
+
+
+      const recognition =
+        new SpeechRecognition();
+
+
+      recognition.lang =
+        language;
+
+
+      recognition.continuous =
+        false;
+
+
+      recognition.interimResults =
+        false;
+
+
+      voiceButton.classList.add(
         "listening"
       );
 
+
       voiceButton.innerText =
-        "🎙️ Start Voice";
+        "🎙️ Listening...";
+
+
+      status.innerText =
+        language === "ha-NG"
+          ? "Ka yi magana yanzu..."
+          : "Please speak now.";
+
+
+      recognition.start();
+
+
+      recognition.onresult =
+        function (event) {
+
+          const spokenQuestion =
+            event.results[0][0].transcript;
+
+
+          question.innerText =
+            spokenQuestion;
+
+
+          status.innerText =
+            "✅ Question received.";
+
+
+          generateAnswer(
+            spokenQuestion,
+            language
+          );
+
+        };
+
+
+      recognition.onerror =
+        function (event) {
+
+          console.error(event);
+
+
+          status.innerText =
+            "❌ I could not hear you. Please try again.";
+
+        };
+
+
+      recognition.onend =
+        function () {
+
+          voiceButton.classList.remove(
+            "listening"
+          );
+
+
+          voiceButton.innerText =
+            "🎙️ Start Voice";
+
+        };
 
     };
 
-};
+
+  /* TEXT TO SPEECH */
+
+  window.speakAnswer =
+    function () {
+
+      const text =
+        document.getElementById("answerText").innerText;
 
 
-/* ANSWER FROM DOCUMENT */
+      const language =
+        document.getElementById("language").value;
 
-function generateAnswer(
-  question,
-  language
-) {
 
-  const answer =
-    document.getElementById(
-      "answer"
-    );
+      if (!text) {
+        return;
+      }
 
-  const answerText =
-    document.getElementById(
-      "answerText"
-    );
 
-  answer.style.display =
-    "block";
+      if (!("speechSynthesis" in window)) {
 
-  if (!documentText) {
-
-    if (language === "ha-NG") {
-
-      answerText.innerText =
-        "Ba a ɗora EIA PDF ba tukuna. Da fatan za ka ɗora takardar EIA domin VoiceBridge ya iya nemo bayanin da ya dace.";
-
-    } else {
-
-      answerText.innerText =
-        "No EIA document has been uploaded yet. Please upload an EIA PDF so VoiceBridge can search the document.";
-
-    }
-
-    return;
-  }
-
-  const q =
-    question.toLowerCase();
-
-  const keywords =
-    q.split(/\s+/)
-      .filter(word => word.length > 2);
-
-  const sentences =
-    documentText
-      .split(/[.!?]+/)
-      .filter(sentence => {
-
-        const lowerSentence =
-          sentence.toLowerCase();
-
-        return keywords.some(
-          keyword =>
-            lowerSentence.includes(keyword)
+        alert(
+          "Text-to-speech is not supported on this browser."
         );
 
-      })
-      .slice(0, 3);
+        return;
 
-  if (sentences.length === 0) {
-
-    if (language === "ha-NG") {
-
-      answerText.innerText =
-        "Ban sami bayani kai tsaye game da wannan tambayar a cikin EIA document ɗin da aka ɗora ba. A cikakken version na VoiceBridge, AI zai iya nazarin document ɗin sosai ya ba da ƙarin bayani.";
-
-    } else {
-
-      answerText.innerText =
-        "I could not find a direct answer to this question in the uploaded EIA document. In the full VoiceBridge version, AI will analyse the document more deeply and provide a clearer explanation.";
-
-    }
-
-    return;
-  }
-
-  if (language === "ha-NG") {
-
-    answerText.innerText =
-      "📄 Ga bayanin da na samu daga EIA document:\n\n" +
-      sentences.join(".\n\n") +
-      "\n\n⚠️ Wannan prototype ne; ba ƙwararriyar shawarar EIA ba ce.";
-
-  } else {
-
-    answerText.innerText =
-      "📄 Relevant information from the EIA document:\n\n" +
-      sentences.join(".\n\n") +
-      "\n\n⚠️ This is a prototype response, not a professional EIA assessment.";
-
-  }
-
-}
+      }
 
 
-/* TEXT TO SPEECH */
+      window.speechSynthesis.cancel();
 
-window.speakAnswer =
-function () {
 
-  const text =
-    document.getElementById(
-      "answerText"
-    ).innerText;
+      const speech =
+        new SpeechSynthesisUtterance(text);
 
-  const language =
-    document.getElementById(
-      "language"
-    ).value;
 
-  if (
-    !("speechSynthesis" in window)
-  ) {
+      speech.lang =
+        language;
 
-    alert(
-      "Text-to-speech is not supported on this browser."
+
+      speech.rate =
+        0.9;
+
+
+      speech.pitch =
+        1;
+
+
+      window.speechSynthesis.speak(
+        speech
+      );
+
+    };
+
+
+  /* ENTER KEY FOR TEXT QUESTION */
+
+  document
+    .getElementById("textQuestion")
+    .addEventListener(
+      "keydown",
+      function (event) {
+
+        if (event.key === "Enter") {
+
+          event.preventDefault();
+
+          window.askTypedQuestion();
+
+        }
+
+      }
     );
 
-    return;
-  }
+</script>
 
-  window.speechSynthesis.cancel();
-
-  const speech =
-    new SpeechSynthesisUtterance(
-      text
-    );
-
-  speech.lang =
-    language;
-
-  speech.rate =
-    0.9;
-
-  speech.pitch =
-    1;
-
-  window.speechSynthesis.speak(
-    speech
-  );
-
-};
-
-</script></body>
+</body>
 </html>
