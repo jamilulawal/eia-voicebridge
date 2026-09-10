@@ -2105,6 +2105,41 @@ askAI();
         });
     });
   }
+  function updateModeIndicator() {
+
+  let indicator = document.getElementById("modeIndicator");
+
+  if (!indicator) {
+
+    indicator = document.createElement("div");
+
+    indicator.id = "modeIndicator";
+
+    indicator.style.cssText =
+      "position:fixed;top:15px;right:15px;" +
+      "z-index:9999;padding:8px 14px;" +
+      "border-radius:20px;font-size:13px;" +
+      "font-weight:bold;background:#eef6ff;" +
+      "border:1px solid #c9def5;";
+
+    document.body.appendChild(indicator);
+  }
+
+  if (navigator.onLine) {
+
+    indicator.innerHTML = "🌐 ONLINE AI MODE";
+
+  } else {
+
+    indicator.innerHTML = "📵 OFFLINE MODE";
+
+  }
+}
+
+window.addEventListener("online", updateModeIndicator);
+window.addEventListener("offline", updateModeIndicator);
+
+window.addEventListener("load", updateModeIndicator);
 </script>
 </body>
 </html>
