@@ -2124,7 +2124,20 @@ askAI();
 
     document.body.appendChild(indicator);
   }
+function saveEIAResult(){
 
+  const savedData = {
+    document: extractedText,
+    savedAt: new Date().toLocaleString()
+  };
+
+  localStorage.setItem(
+    "EIA_VOICEBRIDGE_SAVED",
+    JSON.stringify(savedData)
+  );
+
+  alert("✓ EIA document saved on this device.");
+}
   if (navigator.onLine) {
 
     indicator.innerHTML = "🌐 ONLINE AI MODE";
