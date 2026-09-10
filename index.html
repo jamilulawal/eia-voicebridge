@@ -1143,37 +1143,302 @@ maxCharacters
 // SMART ANALYSIS
 // ==========================================
 
-async function analyzeEIA(){
+async async function analyzeEIA(){
 
-const status=
-document.getElementById(
-"analysisStatus"
-);
+const status =
+document.getElementById("analysisStatus");
 
-const result=
-document.getElementById(
-"analysisResult"
-);
+const result =
+document.getElementById("analysisResult");
 
 if(!extractedText){
 
-status.innerHTML=
+status.innerHTML =
 '<p class="error">Please upload and extract an EIA PDF first.</p>';
 
 return;
 
 }
 
-status.innerHTML=
+
+/* ================================
+   CHECK INTERNET CONNECTION
+================================ */
+
+const online =
+navigator.onLine;
+
+
+/* ================================
+   OFFLINE ANALYSIS
+================================ */
+
+function offlineEIAAnalysis(text){
+
+const lower =
+text.toLowerCase();
+
+function detect(keywords){
+
+return keywords.some(word =>
+lower.includes(word)
+);
+
+}
+
+const water =
+detect([
+"water pollution",
+"water quality",
+"wastewater",
+"effluent",
+"surface water",
+"groundwater",
+"water contamination",
+"drainage"
+]);
+
+const air =
+detect([
+"air pollution",
+"air quality",
+"dust",
+"emission",
+"particulate",
+"smoke",
+"vehicle emission"
+]);
+
+const land =
+detect([
+"soil",
+"land degradation",
+"erosion",
+"excavation",
+"solid waste",
+"land pollution"
+]);
+
+const biodiversity =
+detect([
+"biodiversity",
+"wildlife",
+"vegetation",
+"habitat",
+"flora",
+"fauna",
+"ecosystem"
+]);
+
+const community =
+detect([
+"community",
+"public health",
+"health",
+"employment",
+"livelihood",
+"noise",
+"resettlement"
+]);
+
+const mitigation =
+detect([
+"mitigation",
+"management plan",
+"monitoring",
+"control measures",
+"environmental management"
+]);
+
+
+function level(found){
+
+return found
+? "Moderate"
+: "Not clearly stated";
+
+}
+
+function summary(found, subject){
+
+return found
+? subject +
+" is discussed in the document and may require appropriate monitoring and management."
+: "Not clearly stated in the document.";
+}
+
+
+let detectedCount =
+[
+water,
+air,
+land,
+biodiversity,
+community
+].filter(Boolean).length;
+
+let overall =
+detectedCount >= 4
+? "Moderate"
+: detectedCount >= 2
+? "Low"
+: "Not clearly stated";
+
+
+return `
+
+OFFLINE PRELIMINARY EIA ANALYSIS
+
+OVERALL IMPACT: ${overall}
+
+WATER LEVEL: ${level(water)}
+WATER SUMMARY: ${summary(water,"Water-related environmental issues")}
+
+AIR LEVEL: ${level(air)}
+AIR SUMMARY: ${summary(air,"Air quality and emission issues")}
+
+LAND LEVEL: ${level(land)}
+LAND SUMMARY: ${summary(land,"Land and soil issues")}
+
+BIODIVERSITY LEVEL: ${level(biodiversity)}
+BIODIVERSITY SUMMARY: ${summary(biodiversity,"Biodiversity and ecosystem issues")}
+
+COMMUNITY LEVEL: ${level(community)}
+COMMUNITY SUMMARY: ${summary(community,"Community and health issues")}
+
+MITIGATION LEVEL: ${level(mitigation)}
+MITIGATION SUMMARY: ${summary(mitigation,"Mitigation and environmental management measures")}
+
+
+1. PROJECT OVERVIEW
+
+This is an offline preliminary screening of the uploaded EIA document. The system identifies environmental topics using information available in the extracted document text.
+
+
+2. MAJOR ENVIRONMENTAL IMPACTS
+
+The document contains references to ${
+detectedCount
+} major environmental assessment areas.
+
+
+3. WATER IMPACTS
+
+${
+water
+? "The document contains information related to water resources, water quality, wastewater, drainage or possible water contamination."
+: "Not clearly stated in the document."
+}
+
+
+4. AIR QUALITY
+
+${
+air
+? "The document contains information related to air quality, dust, emissions or other atmospheric concerns."
+: "Not clearly stated in the document."
+}
+
+
+5. LAND AND SOIL
+
+${
+land
+? "The document contains information related to land, soil, erosion, excavation or waste-related impacts."
+: "Not clearly stated in the document."
+}
+
+
+6. BIODIVERSITY AND WILDLIFE
+
+${
+biodiversity
+? "The document contains information related to biodiversity, vegetation, wildlife, habitats or ecosystems."
+: "Not clearly stated in the document."
+}
+
+
+7. COMMUNITY AND HEALTH
+
+${
+community
+? "The document contains information related to communities, public health, livelihoods, employment, noise or social impacts."
+: "Not clearly stated in the document."
+}
+
+
+8. MITIGATION MEASURES
+
+${
+mitigation
+? "The document contains references to mitigation, monitoring or environmental management measures."
+: "Not clearly stated in the document."
+}
+
+
+9. KEY RISKS FOR THE COMMUNITY
+
+Potential risks should be confirmed from the original EIA document. This offline mode provides preliminary screening only and does not replace professional EIA review.
+
+
+10. KEY RECOMMENDATIONS
+
+Review the identified environmental topics against the original EIA document and confirm important impacts, mitigation measures and monitoring requirements with a qualified environmental professional.
+
+
+OFFLINE MODE NOTICE
+
+This is a preliminary offline analysis based on keyword detection. It does not use the online AI service and should not be treated as a final professional EIA assessment.
+
+`;
+
+}
+
+
+/* ================================
+   OFFLINE FIRST
+================================ */
+
+if(!online){
+
+const analysis =
+offlineEIAAnalysis(extractedText);
+
+displayDashboard(analysis);
+
+result.innerHTML =
+formatAIText(analysis);
+
+status.innerHTML =
+'<p class="success">📵 Offline Mode: Preliminary EIA Analysis completed.</p>';
+
+document.getElementById(
+"dashboard"
+).style.display = "block";
+
+result.scrollIntoView({
+behavior:"smooth"
+});
+
+return;
+
+}
+
+
+/* ================================
+   ONLINE AI ANALYSIS
+================================ */
+
+status.innerHTML =
 '<p>🧠 AI is analyzing the EIA<span class="loading">...</span></p>';
 
-const documentForAI=
+const documentForAI =
 limitDocumentText(
 extractedText,
 30000
 );
 
-const prompt=`
+const prompt = `
 
 You are EIA VoiceBridge, a professional Environmental Impact Assessment analysis assistant.
 
@@ -1182,6 +1447,7 @@ Analyze ONLY the uploaded EIA document.
 Do not invent facts, numbers, locations, impacts or mitigation measures.
 
 If something is not available in the document, say:
+
 "Not clearly stated in the document."
 
 Analyze the document and return EXACTLY this structured format:
@@ -1229,9 +1495,9 @@ ${documentForAI}
 
 try{
 
-const response=
+const response =
 await fetch(
-BACKEND_URL+"/ask-ai",
+BACKEND_URL + "/ask-ai",
 {
 method:"POST",
 
@@ -1251,32 +1517,32 @@ language:"English"
 if(!response.ok){
 
 throw new Error(
-"Server returned "+
+"Server returned " +
 response.status
 );
 
 }
 
-const data=
+const data =
 await response.json();
 
-const analysis=
-data.answer||
-data.response||
-data.message||
+const analysis =
+data.answer ||
+data.response ||
+data.message ||
 "No analysis returned.";
 
 displayDashboard(analysis);
 
-result.innerHTML=
+result.innerHTML =
 formatAIText(analysis);
 
-status.innerHTML=
+status.innerHTML =
 '<p class="success">✓ EIA Smart Analysis completed successfully.</p>';
 
 document.getElementById(
 "dashboard"
-).style.display="block";
+).style.display = "block";
 
 result.scrollIntoView({
 behavior:"smooth"
@@ -1286,8 +1552,29 @@ behavior:"smooth"
 
 console.error(error);
 
-status.innerHTML=
-'<p class="error">Unable to complete EIA analysis. Please check the backend connection.</p>';
+
+/* ================================
+   AUTOMATIC OFFLINE FALLBACK
+================================ */
+
+const analysis =
+offlineEIAAnalysis(extractedText);
+
+displayDashboard(analysis);
+
+result.innerHTML =
+formatAIText(analysis);
+
+status.innerHTML =
+'<p class="success">📵 Online AI unavailable. Offline Preliminary Analysis completed.</p>';
+
+document.getElementById(
+"dashboard"
+).style.display = "block";
+
+result.scrollIntoView({
+behavior:"smooth"
+);
 
 }
 
