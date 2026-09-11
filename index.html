@@ -8,7 +8,7 @@
 
   <meta
     name="description"
-    content="EIA VoiceBridge helps communities understand Environmental Impact Assessment documents using AI, dashboards, Hausa and English support, and voice interaction."
+    content="EIA VoiceBridge helps communities understand Environmental Impact Assessment information using AI, document extraction, preliminary EIA generation, dashboards, Hausa and English support, and voice interaction."
   >
 
   <style>
@@ -101,9 +101,10 @@
 
     .nav-links {
       display: flex;
-      gap: 22px;
+      gap: 20px;
       font-size: 14px;
       font-weight: 600;
+      flex-wrap: wrap;
     }
 
     .nav-links a:hover {
@@ -224,6 +225,14 @@
 
     .btn-red {
       background: #a83232;
+    }
+
+    .btn-dark {
+      background: #263746;
+    }
+
+    .btn-purple {
+      background: #6842a5;
     }
 
     .status {
@@ -416,6 +425,145 @@
       word-break: break-word;
     }
 
+    /* =====================================================
+       PRELIMINARY EIA GENERATOR
+    ===================================================== */
+
+    .generator-card {
+      border: 1px solid #dbece5;
+      background:
+        linear-gradient(180deg, #ffffff 0%, #f8fcfa 100%);
+    }
+
+    .generator-intro {
+      background: #edf8f3;
+      border-left: 5px solid #0b7655;
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 22px;
+      color: #285b49;
+    }
+
+    .generator-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      font-weight: 700;
+      color: #243746;
+      font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      border: 1px solid #d4dde6;
+      border-radius: 10px;
+      padding: 13px 14px;
+      outline: none;
+      background: white;
+    }
+
+    .form-group textarea {
+      min-height: 105px;
+      resize: vertical;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: #0b7655;
+      box-shadow: 0 0 0 3px rgba(11,118,85,.08);
+    }
+
+    .required {
+      color: #a83232;
+    }
+
+    .generator-actions {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .generator-result {
+      margin-top: 25px;
+      display: none;
+    }
+
+    .generated-document {
+      background: #f8fafc;
+      border: 1px solid #dfe6ed;
+      border-radius: 14px;
+      padding: 22px;
+      min-height: 250px;
+      max-height: 650px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .draft-label {
+      display: inline-block;
+      background: #fff3cd;
+      color: #795b00;
+      border: 1px solid #ead18a;
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .disclaimer {
+      margin-top: 18px;
+      background: #fff8e6;
+      border: 1px solid #edd28b;
+      border-left: 5px solid #c28b00;
+      border-radius: 10px;
+      padding: 15px;
+      color: #674e08;
+      font-size: 13px;
+    }
+
+    .workflow {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    .workflow-step {
+      background: white;
+      border: 1px solid #e1e7ed;
+      border-radius: 12px;
+      padding: 13px 8px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .workflow-step span {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+
     footer {
       background: #062b20;
       color: white;
@@ -440,6 +588,18 @@
 
       .nav-links {
         display: none;
+      }
+
+      .generator-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-group.full {
+        grid-column: auto;
+      }
+
+      .workflow {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
 
@@ -469,6 +629,10 @@
         width: 100%;
         margin: 5px 0;
       }
+
+      .workflow {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -477,24 +641,34 @@
 
 <header>
   <div class="nav">
+
     <div class="logo">
       EIA <span>VoiceBridge</span>
-      <small class="version">v2.1</small>
+      <small class="version">v3.0</small>
     </div>
 
     <div class="nav-links">
       <a href="#upload">Upload</a>
+      <a href="#generate">Generate EIA</a>
       <a href="#analysis">Analysis</a>
       <a href="#dashboard">Dashboard</a>
       <a href="#assistant">AI Assistant</a>
     </div>
+
   </div>
 </header>
 
+
+<!-- ======================================================
+     HERO
+====================================================== -->
+
 <section class="hero">
+
   <div class="hero-content">
 
     <div>
+
       <h1>
         Making EIA Information
         <span>Understandable.</span>
@@ -502,45 +676,80 @@
 
       <p>
         EIA VoiceBridge helps communities understand complex
-        Environmental Impact Assessment documents through document
-        extraction, AI analysis, visual impact summaries, Hausa and
-        English support, and voice interaction.
+        Environmental Impact Assessment information through
+        document extraction, AI analysis, preliminary EIA
+        generation, visual impact summaries, Hausa and English
+        support, and voice interaction.
       </p>
 
       <a href="#upload">
-        <button type="button">Start EIA Analysis</button>
+        <button type="button">
+          Start EIA Analysis
+        </button>
       </a>
+
+      <a href="#generate">
+        <button
+          type="button"
+          class="btn-blue"
+        >
+          Generate Preliminary EIA
+        </button>
+      </a>
+
     </div>
 
     <div class="hero-card">
-      <h3>🌍 Environmental Intelligence</h3>
+
+      <h3>
+        🌍 Environmental Intelligence
+      </h3>
 
       <p>
-        Turning technical environmental information into simple,
-        accessible and actionable knowledge for communities,
-        students, professionals and decision-makers.
+        Turning technical environmental information into
+        simple, accessible and actionable knowledge for
+        communities, students, professionals and
+        decision-makers.
       </p>
+
     </div>
 
   </div>
+
 </section>
+
 
 <main>
 
-  <!-- UPLOAD -->
 
-  <section class="container" id="upload">
+  <!-- ====================================================
+       UPLOAD EIA
+  ===================================================== -->
+
+  <section
+    class="container"
+    id="upload"
+  >
 
     <div class="section-title">
-      <h2>Upload EIA Document</h2>
-      <p>Upload a PDF Environmental Impact Assessment document.</p>
+
+      <h2>
+        Upload EIA Document
+      </h2>
+
+      <p>
+        Upload a PDF Environmental Impact Assessment document.
+      </p>
+
     </div>
 
     <div class="card">
 
       <div class="upload-box">
 
-        <h3>📄 Select EIA PDF</h3>
+        <h3>
+          📄 Select EIA PDF
+        </h3>
 
         <p>
           Maximum supported file size: 25 MB
@@ -559,47 +768,397 @@
           Extract Document
         </button>
 
-        <div id="status" class="status">
+        <div
+          id="status"
+          class="status"
+        >
           Initialising EIA VoiceBridge...
         </div>
 
         <div class="system-status">
 
-          <div id="jsStatus" class="status-pill">
+          <div
+            id="jsStatus"
+            class="status-pill"
+          >
             JavaScript: Checking...
           </div>
 
-          <div id="pdfStatus" class="status-pill">
+          <div
+            id="pdfStatus"
+            class="status-pill"
+          >
             PDF Engine: Checking...
           </div>
 
-          <div id="networkStatus" class="status-pill">
+          <div
+            id="networkStatus"
+            class="status-pill"
+          >
             Network: Checking...
           </div>
 
         </div>
 
-        <div id="debugBox" class="debug-box"></div>
+        <div
+          id="debugBox"
+          class="debug-box"
+        ></div>
 
       </div>
 
     </div>
+
   </section>
 
 
-  <!-- DOCUMENT -->
+  <!-- ====================================================
+       GENERATE PRELIMINARY EIA
+  ===================================================== -->
+
+  <section
+    class="container"
+    id="generate"
+  >
+
+    <div class="section-title">
+
+      <h2>
+        📝 Generate Preliminary EIA
+      </h2>
+
+      <p>
+        No EIA document yet? Provide basic project information
+        and generate an AI-assisted preliminary screening draft.
+      </p>
+
+    </div>
+
+    <div class="card generator-card">
+
+      <div class="generator-intro">
+
+        <strong>
+          How this works:
+        </strong>
+
+        <br>
+
+        Tell EIA VoiceBridge about the proposed project.
+        The AI will organize the information into a
+        preliminary environmental screening and planning draft.
+        You can then use that draft in the same EIA analysis
+        workspace.
+
+      </div>
+
+
+      <div class="generator-grid">
+
+
+        <div class="form-group">
+
+          <label for="projectName">
+            Project Name
+            <span class="required">*</span>
+          </label>
+
+          <input
+            id="projectName"
+            type="text"
+            placeholder="e.g. Community Solar Mini-Grid Project"
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="projectType">
+            Project Type
+            <span class="required">*</span>
+          </label>
+
+          <select id="projectType">
+
+            <option value="">
+              Select project type
+            </option>
+
+            <option>
+              Agriculture
+            </option>
+
+            <option>
+              Construction
+            </option>
+
+            <option>
+              Energy
+            </option>
+
+            <option>
+              Manufacturing
+            </option>
+
+            <option>
+              Mining
+            </option>
+
+            <option>
+              Oil and Gas
+            </option>
+
+            <option>
+              Road and Transportation
+            </option>
+
+            <option>
+              Water and Sanitation
+            </option>
+
+            <option>
+              Waste Management
+            </option>
+
+            <option>
+              Housing and Urban Development
+            </option>
+
+            <option>
+              Other
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="projectLocation">
+            Project Location
+            <span class="required">*</span>
+          </label>
+
+          <input
+            id="projectLocation"
+            type="text"
+            placeholder="e.g. Dandume LGA, Katsina State, Nigeria"
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="projectCapacity">
+            Expected Size / Capacity
+          </label>
+
+          <input
+            id="projectCapacity"
+            type="text"
+            placeholder="e.g. 5 hectares, 2 MW, 500 units"
+          >
+
+        </div>
+
+
+        <div class="form-group full">
+
+          <label for="projectDescription">
+            Project Description
+            <span class="required">*</span>
+          </label>
+
+          <textarea
+            id="projectDescription"
+            placeholder="Briefly describe what the project will do, why it is proposed and the main purpose of the project."
+          ></textarea>
+
+        </div>
+
+
+        <div class="form-group full">
+
+          <label for="projectActivities">
+            Main Project Activities
+          </label>
+
+          <textarea
+            id="projectActivities"
+            placeholder="List the main activities such as site clearing, construction, excavation, transportation, operation, maintenance, waste generation, etc."
+          ></textarea>
+
+        </div>
+
+
+        <div class="form-group full">
+
+          <label for="environmentalConcerns">
+            Known Environmental or Community Concerns
+          </label>
+
+          <textarea
+            id="environmentalConcerns"
+            placeholder="Mention any known concerns such as water pollution, dust, noise, land disturbance, waste, biodiversity, health, livelihoods or community concerns."
+          ></textarea>
+
+        </div>
+
+      </div>
+
+
+      <div class="generator-actions">
+
+        <button
+          id="generateEIAButton"
+          type="button"
+        >
+          🤖 Generate Preliminary EIA
+        </button>
+
+        <button
+          id="clearGenerateButton"
+          type="button"
+          class="btn-dark"
+        >
+          🧹 Clear Form
+        </button>
+
+      </div>
+
+
+      <div
+        id="generateStatus"
+        class="status"
+      >
+        Complete the project information above to generate a preliminary EIA draft.
+      </div>
+
+
+      <div
+        id="generatorResult"
+        class="generator-result"
+      >
+
+        <span class="draft-label">
+          AI-GENERATED PRELIMINARY SCREENING DRAFT
+        </span>
+
+        <div
+          id="generatedDocument"
+          class="generated-document"
+        ></div>
+
+
+        <div class="generator-actions">
+
+          <button
+            id="useGeneratedButton"
+            type="button"
+          >
+            ➡️ Use Draft for Analysis
+          </button>
+
+          <button
+            id="copyGeneratedButton"
+            type="button"
+            class="btn-blue"
+          >
+            📋 Copy Draft
+          </button>
+
+          <button
+            id="downloadGeneratedButton"
+            type="button"
+            class="btn-gold"
+          >
+            ⬇️ Download Draft
+          </button>
+
+        </div>
+
+
+        <div class="disclaimer">
+
+          <strong>
+            Important professional disclaimer:
+          </strong>
+
+          <br>
+
+          This AI-generated document is a preliminary planning
+          and screening draft. It does not replace a legally
+          required Environmental Impact Assessment, professional
+          environmental assessment, field studies, laboratory
+          analysis, stakeholder consultation, or regulatory approval.
+
+        </div>
+
+      </div>
+
+
+      <div class="workflow">
+
+        <div class="workflow-step">
+          <span>📝</span>
+          Project Information
+        </div>
+
+        <div class="workflow-step">
+          <span>🤖</span>
+          AI Draft
+        </div>
+
+        <div class="workflow-step">
+          <span>🔍</span>
+          Smart Analysis
+        </div>
+
+        <div class="workflow-step">
+          <span>📊</span>
+          Impact Dashboard
+        </div>
+
+        <div class="workflow-step">
+          <span>🎙️</span>
+          Ask AI / Voice
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ====================================================
+       DOCUMENT
+  ===================================================== -->
 
   <section class="container">
 
     <div class="section-title">
-      <h2>Extracted EIA Document</h2>
-      <p>Text extracted from the uploaded document.</p>
+
+      <h2>
+        EIA Workspace
+      </h2>
+
+      <p>
+        Extracted or generated environmental assessment content.
+      </p>
+
     </div>
 
     <div class="card">
 
-      <div id="documentText" class="document-box">
-        No EIA document has been extracted yet.
+      <div
+        id="documentText"
+        class="document-box"
+      >
+        No EIA document or preliminary EIA draft has been loaded yet.
       </div>
 
     </div>
@@ -607,16 +1166,25 @@
   </section>
 
 
-  <!-- ANALYSIS -->
+  <!-- ====================================================
+       ANALYSIS
+  ===================================================== -->
 
-  <section class="container" id="analysis">
+  <section
+    class="container"
+    id="analysis"
+  >
 
     <div class="section-title">
-      <h2>EIA Smart Analysis</h2>
+
+      <h2>
+        EIA Smart Analysis
+      </h2>
 
       <p>
         Identify major environmental and social impact areas.
       </p>
+
     </div>
 
     <div class="card">
@@ -649,7 +1217,7 @@
         class="analysis-box"
         style="margin-top:18px;"
       >
-        Upload and extract an EIA document first.
+        Load an EIA document or generate a preliminary EIA first.
       </div>
 
       <div
@@ -663,13 +1231,20 @@
   </section>
 
 
-  <!-- DASHBOARD -->
+  <!-- ====================================================
+       DASHBOARD
+  ===================================================== -->
 
-  <section class="container" id="dashboard">
+  <section
+    class="container"
+    id="dashboard"
+  >
 
     <div class="section-title">
 
-      <h2>Impact Dashboard</h2>
+      <h2>
+        Impact Dashboard
+      </h2>
 
       <p>
         A simple overview of major EIA impact categories.
@@ -681,32 +1256,50 @@
 
       <div class="impact-card">
         <h4>💧 Water</h4>
-        <div id="waterImpact" class="impact-score">--</div>
+        <div
+          id="waterImpact"
+          class="impact-score"
+        >--</div>
       </div>
 
       <div class="impact-card">
         <h4>🌫️ Air Quality</h4>
-        <div id="airImpact" class="impact-score">--</div>
+        <div
+          id="airImpact"
+          class="impact-score"
+        >--</div>
       </div>
 
       <div class="impact-card">
         <h4>🌱 Land & Soil</h4>
-        <div id="landImpact" class="impact-score">--</div>
+        <div
+          id="landImpact"
+          class="impact-score"
+        >--</div>
       </div>
 
       <div class="impact-card">
         <h4>🐦 Biodiversity</h4>
-        <div id="biodiversityImpact" class="impact-score">--</div>
+        <div
+          id="biodiversityImpact"
+          class="impact-score"
+        >--</div>
       </div>
 
       <div class="impact-card">
         <h4>👥 Community</h4>
-        <div id="communityImpact" class="impact-score">--</div>
+        <div
+          id="communityImpact"
+          class="impact-score"
+        >--</div>
       </div>
 
       <div class="impact-card">
         <h4>🛡️ Mitigation</h4>
-        <div id="mitigationImpact" class="impact-score">--</div>
+        <div
+          id="mitigationImpact"
+          class="impact-score"
+        >--</div>
       </div>
 
     </div>
@@ -714,16 +1307,23 @@
   </section>
 
 
-  <!-- AI ASSISTANT -->
+  <!-- ====================================================
+       AI ASSISTANT
+  ===================================================== -->
 
-  <section class="container" id="assistant">
+  <section
+    class="container"
+    id="assistant"
+  >
 
     <div class="section-title">
 
-      <h2>EIA AI Assistant</h2>
+      <h2>
+        EIA AI Assistant
+      </h2>
 
       <p>
-        Ask questions about the extracted EIA document.
+        Ask questions about the loaded EIA document or generated draft.
       </p>
 
     </div>
@@ -819,11 +1419,13 @@
 
 <footer>
 
-  <h3>EIA VoiceBridge</h3>
+  <h3>
+    EIA VoiceBridge
+  </h3>
 
   <p>
-    Making Environmental Impact Assessment information easier to
-    understand, access and communicate.
+    Making Environmental Impact Assessment information easier
+    to understand, access and communicate.
   </p>
 
   <p style="margin-top:10px;">
@@ -843,21 +1445,16 @@
 
 
 <!-- ======================================================
-     EIA VOICEBRIDGE APPLICATION ENGINE
+     APPLICATION ENGINE
 ====================================================== -->
 
 <script>
 
 "use strict";
 
-
-/* =========================================================
-   GLOBAL APPLICATION START
-========================================================= */
-
 (function () {
 
-  const APP_VERSION = "2.1";
+  const APP_VERSION = "3.0";
 
   const BACKEND_URL =
     "https://eia-voicebridge-production.up.railway.app";
@@ -874,10 +1471,16 @@
 
   let selectedFile = null;
 
+  let generatedEIA = "";
 
-  /* =======================================================
+  let generatedProjectName = "";
+
+  let documentSource = "none";
+
+
+  /* =====================================================
      HELPER
-  ======================================================= */
+  ===================================================== */
 
   function $(id) {
     return document.getElementById(id);
@@ -895,6 +1498,24 @@
   function showStatus(message, type) {
 
     const box = $("status");
+
+    if (!box) return;
+
+    box.textContent =
+      message || "";
+
+    box.className =
+      "status " + (type || "info");
+  }
+
+
+  function showGenerateStatus(
+    message,
+    type
+  ) {
+
+    const box =
+      $("generateStatus");
 
     if (!box) return;
 
@@ -972,9 +1593,9 @@
   }
 
 
-  /* =======================================================
-     PDF.JS SETUP
-  ======================================================= */
+  /* =====================================================
+     PDF ENGINE
+  ===================================================== */
 
   function setupPDFEngine() {
 
@@ -1041,9 +1662,9 @@
   }
 
 
-  /* =======================================================
+  /* =====================================================
      SYSTEM STATUS
-  ======================================================= */
+  ===================================================== */
 
   function updateNetworkStatus() {
 
@@ -1065,7 +1686,6 @@
         "status-pill ok";
 
       if (indicator) {
-
         indicator.textContent =
           "Online Mode";
       }
@@ -1079,7 +1699,6 @@
         "status-pill bad";
 
       if (indicator) {
-
         indicator.textContent =
           "Offline Mode";
       }
@@ -1119,9 +1738,9 @@
   }
 
 
-  /* =======================================================
+  /* =====================================================
      FILE SELECTION
-  ======================================================= */
+  ===================================================== */
 
   function handleFileSelection(event) {
 
@@ -1193,6 +1812,10 @@
     }
 
 
+    documentSource =
+      "uploaded";
+
+
     safeText(
       $("documentText"),
 
@@ -1209,9 +1832,9 @@
   }
 
 
-  /* =======================================================
+  /* =====================================================
      PDF EXTRACTION
-  ======================================================= */
+  ===================================================== */
 
   async function extractPDF() {
 
@@ -1349,6 +1972,10 @@
         );
 
 
+      documentSource =
+        "uploaded";
+
+
       safeText(
         $("documentText"),
         extractedText
@@ -1427,9 +2054,647 @@
   }
 
 
-  /* =======================================================
+  /* =====================================================
+     PRELIMINARY EIA GENERATOR
+  ===================================================== */
+
+  function getGenerateProjectData() {
+
+    return {
+
+      projectName:
+        $("projectName")
+          ? $("projectName").value.trim()
+          : "",
+
+      projectType:
+        $("projectType")
+          ? $("projectType").value.trim()
+          : "",
+
+      location:
+        $("projectLocation")
+          ? $("projectLocation").value.trim()
+          : "",
+
+      description:
+        $("projectDescription")
+          ? $("projectDescription").value.trim()
+          : "",
+
+      activities:
+        $("projectActivities")
+          ? $("projectActivities").value.trim()
+          : "",
+
+      capacity:
+        $("projectCapacity")
+          ? $("projectCapacity").value.trim()
+          : "",
+
+      concerns:
+        $("environmentalConcerns")
+          ? $("environmentalConcerns").value.trim()
+          : ""
+
+    };
+  }
+
+
+  function validateGenerateForm(data) {
+
+    const missing = [];
+
+
+    if (!data.projectName) {
+      missing.push("Project Name");
+    }
+
+    if (!data.projectType) {
+      missing.push("Project Type");
+    }
+
+    if (!data.location) {
+      missing.push("Project Location");
+    }
+
+    if (!data.description) {
+      missing.push("Project Description");
+    }
+
+
+    return missing;
+  }
+
+
+  function buildEIARequest(
+    data,
+    language
+  ) {
+
+    return `
+You are the environmental assessment drafting assistant inside EIA VoiceBridge.
+
+Prepare a PRELIMINARY ENVIRONMENTAL IMPACT ASSESSMENT SCREENING AND PLANNING DRAFT for the proposed project described below.
+
+PROJECT INFORMATION
+
+Project Name:
+${data.projectName}
+
+Project Type:
+${data.projectType}
+
+Location:
+${data.location}
+
+Expected Size / Capacity:
+${data.capacity || "To be verified/collected."}
+
+Project Description:
+${data.description}
+
+Main Activities:
+${data.activities || "To be verified/collected."}
+
+Known Environmental or Community Concerns:
+${data.concerns || "None provided. To be verified/collected."}
+
+OUTPUT LANGUAGE:
+${language}
+
+IMPORTANT PROFESSIONAL RULES
+
+1. This is a preliminary AI-generated planning and screening draft.
+2. Do NOT present it as an approved, legally valid or completed EIA.
+3. Do NOT fabricate laboratory results.
+4. Do NOT fabricate field measurements.
+5. Do NOT fabricate biodiversity or species surveys.
+6. Do NOT fabricate stakeholder consultation results.
+7. Do NOT fabricate government approvals or permits.
+8. Do NOT invent exact project-specific emissions, water-quality values or measurements.
+9. When project-specific information is unavailable, write "To be verified/collected."
+10. Clearly distinguish likely potential impacts from confirmed impacts.
+11. Keep recommendations practical and suitable for preliminary planning.
+12. Mention where professional environmental assessment, field studies, laboratory analysis, stakeholder consultation or regulatory review will still be required.
+
+STRUCTURE THE DRAFT WITH:
+
+1. Project Overview
+2. Purpose of the Preliminary Screening
+3. Project Description
+4. Main Project Activities
+5. Existing Environmental and Social Information
+6. Potential Environmental Impacts
+   - Water
+   - Air Quality
+   - Land and Soil
+   - Biodiversity
+   - Waste
+   - Noise
+   - Community Health and Safety
+   - Livelihoods and Socio-economic Issues
+7. Potential Positive Impacts
+8. Potential Negative Impacts
+9. Preliminary Mitigation Measures
+10. Environmental and Social Management Considerations
+11. Monitoring Considerations
+12. Information Gaps / Data Still Required
+13. Stakeholder Consultation Requirements
+14. Regulatory and Professional Assessment Considerations
+15. Preliminary Conclusion
+16. IMPORTANT DISCLAIMER
+
+Write clearly and professionally. Do not claim that missing information has been measured or verified.
+
+The final disclaimer must communicate:
+
+"This AI-generated document is a preliminary planning and screening draft. It does not replace a legally required Environmental Impact Assessment, professional environmental assessment, field studies, laboratory analysis, stakeholder consultation, or regulatory approval."
+`;
+  }
+
+
+  async function generatePreliminaryEIA() {
+
+    const button =
+      $("generateEIAButton");
+
+
+    const data =
+      getGenerateProjectData();
+
+
+    const missing =
+      validateGenerateForm(
+        data
+      );
+
+
+    if (missing.length > 0) {
+
+      showGenerateStatus(
+        "Please complete: " +
+        missing.join(", ") +
+        ".",
+        "error"
+      );
+
+      return;
+    }
+
+
+    if (!navigator.onLine) {
+
+      showGenerateStatus(
+        "Internet connection is required to generate the AI preliminary EIA.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    if (button) {
+
+      button.disabled =
+        true;
+
+      button.textContent =
+        "⏳ Generating...";
+    }
+
+
+    $("generatorResult").style.display =
+      "none";
+
+
+    showGenerateStatus(
+      "AI is preparing the preliminary environmental screening draft...",
+      "info"
+    );
+
+
+    try {
+
+      const language =
+        $("language")
+          ? $("language").value
+          : "English";
+
+
+      const prompt =
+        buildEIARequest(
+          data,
+          language
+        );
+
+
+      const response =
+        await fetchWithTimeout(
+
+          BACKEND_URL +
+          "/ask-ai",
+
+          {
+
+            method:
+              "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify({
+
+                question:
+                  prompt,
+
+                context:
+                  "EIA VoiceBridge Preliminary EIA Generator. Generate a preliminary environmental screening and planning draft from the supplied project information.",
+
+                language:
+                  language
+
+              })
+          },
+
+          60000
+        );
+
+
+      const raw =
+        await response.text();
+
+
+      let result;
+
+
+      try {
+
+        result =
+          JSON.parse(raw);
+
+      } catch {
+
+        result = {
+          answer:
+            raw
+        };
+      }
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          result.error ||
+          result.message ||
+          "Backend returned HTTP " +
+          response.status
+        );
+      }
+
+
+      const answer =
+        result.answer ||
+        result.response ||
+        result.message ||
+        result.result;
+
+
+      if (!answer) {
+
+        throw new Error(
+          "The AI server returned no generated document."
+        );
+      }
+
+
+      generatedEIA =
+        String(answer);
+
+
+      generatedProjectName =
+        data.projectName;
+
+
+      $("generatedDocument").textContent =
+        generatedEIA;
+
+
+      $("generatorResult").style.display =
+        "block";
+
+
+      showGenerateStatus(
+        "Preliminary EIA draft generated successfully.",
+        "success"
+      );
+
+
+      $("generatorResult")
+        .scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+
+    } catch (error) {
+
+      console.error(
+        "Preliminary EIA generation error:",
+        error
+      );
+
+
+      debug(
+        "Preliminary EIA generation error: " +
+        (error.stack || error.message)
+      );
+
+
+      showGenerateStatus(
+        "Could not generate the preliminary EIA: " +
+        error.message,
+        "error"
+      );
+
+
+    } finally {
+
+      if (button) {
+
+        button.disabled =
+          false;
+
+        button.textContent =
+          "🤖 Generate Preliminary EIA";
+      }
+    }
+  }
+
+
+  function useGeneratedEIA() {
+
+    if (!generatedEIA) {
+
+      showGenerateStatus(
+        "Generate a preliminary EIA draft first.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    extractedText =
+      limitText(
+        generatedEIA,
+        45000
+      );
+
+
+    documentSource =
+      "generated";
+
+
+    selectedFile =
+      null;
+
+
+    safeText(
+      $("documentText"),
+      extractedText
+    );
+
+
+    safeText(
+      $("analysisResult"),
+
+      "✅ AI-generated preliminary EIA loaded into the EIA workspace.\n\n" +
+      "You can now run Smart Analysis, review the Impact Dashboard and ask the AI Assistant questions about the draft."
+    );
+
+
+    resetDashboard();
+
+
+    showStatus(
+      "Preliminary EIA loaded into the workspace successfully.",
+      "success"
+    );
+
+
+    showGenerateStatus(
+      "Draft is now active in the EIA workspace.",
+      "success"
+    );
+
+
+    $("analysis")
+      .scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+  }
+
+
+  async function copyGeneratedEIA() {
+
+    if (!generatedEIA) {
+
+      showGenerateStatus(
+        "There is no generated draft to copy.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    try {
+
+      await navigator.clipboard.writeText(
+        generatedEIA
+      );
+
+
+      showGenerateStatus(
+        "Preliminary EIA draft copied to clipboard.",
+        "success"
+      );
+
+    } catch (error) {
+
+      debug(
+        "Clipboard error: " +
+        error.message
+      );
+
+
+      showGenerateStatus(
+        "Copy failed. Please select and copy the text manually.",
+        "error"
+      );
+    }
+  }
+
+
+  function downloadGeneratedEIA() {
+
+    if (!generatedEIA) {
+
+      showGenerateStatus(
+        "There is no generated draft to download.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    const projectName =
+      generatedProjectName ||
+      "Preliminary_EIA";
+
+
+    const safeFileName =
+      projectName
+        .replace(
+          /[^a-z0-9]+/gi,
+          "_"
+        )
+        .replace(
+          /^_+|_+$/g,
+          ""
+        ) ||
+      "Preliminary_EIA";
+
+
+    const content =
+      "EIA VOICEBRIDGE\n" +
+      "PRELIMINARY ENVIRONMENTAL IMPACT ASSESSMENT SCREENING DRAFT\n\n" +
+      generatedEIA +
+      "\n\n" +
+      "IMPORTANT DISCLAIMER\n\n" +
+      "This AI-generated document is a preliminary planning and screening draft. " +
+      "It does not replace a legally required Environmental Impact Assessment, " +
+      "professional environmental assessment, field studies, laboratory analysis, " +
+      "stakeholder consultation, or regulatory approval.\n";
+
+
+    const blob =
+      new Blob(
+        [content],
+        {
+          type:
+            "text/plain;charset=utf-8"
+        }
+      );
+
+
+    const url =
+      URL.createObjectURL(
+        blob
+      );
+
+
+    const link =
+      document.createElement(
+        "a"
+      );
+
+
+    link.href =
+      url;
+
+    link.download =
+      safeFileName +
+      "_Preliminary_EIA.txt";
+
+
+    document.body.appendChild(
+      link
+    );
+
+
+    link.click();
+
+
+    link.remove();
+
+
+    URL.revokeObjectURL(
+      url
+    );
+
+
+    showGenerateStatus(
+      "Preliminary EIA draft downloaded.",
+      "success"
+    );
+  }
+
+
+  function clearGenerateForm() {
+
+    const fields = [
+      "projectName",
+      "projectLocation",
+      "projectCapacity",
+      "projectDescription",
+      "projectActivities",
+      "environmentalConcerns"
+    ];
+
+
+    fields.forEach(
+      function (id) {
+
+        if ($(id)) {
+          $(id).value =
+            "";
+        }
+      }
+    );
+
+
+    if ($("projectType")) {
+      $("projectType").value =
+        "";
+    }
+
+
+    generatedEIA =
+      "";
+
+    generatedProjectName =
+      "";
+
+
+    if ($("generatedDocument")) {
+      $("generatedDocument").textContent =
+        "";
+    }
+
+
+    if ($("generatorResult")) {
+      $("generatorResult").style.display =
+        "none";
+    }
+
+
+    showGenerateStatus(
+      "Generator form cleared.",
+      "info"
+    );
+  }
+
+
+  /* =====================================================
      OFFLINE ANALYSIS
-  ======================================================= */
+  ===================================================== */
 
   function countKeywords(
     text,
@@ -1617,48 +2882,35 @@
 
   function resetDashboard() {
 
-    safeText(
-      $("waterImpact"),
-      "--"
-    );
+    [
+      "waterImpact",
+      "airImpact",
+      "landImpact",
+      "biodiversityImpact",
+      "communityImpact",
+      "mitigationImpact"
+    ].forEach(
+      function (id) {
 
-    safeText(
-      $("airImpact"),
-      "--"
-    );
-
-    safeText(
-      $("landImpact"),
-      "--"
-    );
-
-    safeText(
-      $("biodiversityImpact"),
-      "--"
-    );
-
-    safeText(
-      $("communityImpact"),
-      "--"
-    );
-
-    safeText(
-      $("mitigationImpact"),
-      "--"
+        safeText(
+          $(id),
+          "--"
+        );
+      }
     );
   }
 
 
-  /* =======================================================
+  /* =====================================================
      EIA ANALYSIS
-  ======================================================= */
+  ===================================================== */
 
   async function analyzeEIA() {
 
     if (!extractedText) {
 
       showStatus(
-        "Please upload and extract an EIA document first.",
+        "Please upload and extract an EIA document or generate a preliminary EIA first.",
         "error"
       );
 
@@ -1707,7 +2959,7 @@
         "<h4>Environmental Impact Overview</h4>";
 
       result +=
-        "<p>This preliminary analysis identifies key environmental themes based on the extracted EIA text.</p>";
+        "<p>This preliminary screening identifies environmental themes based on the content currently loaded in the EIA VoiceBridge workspace.</p>";
 
 
       result +=
@@ -1768,7 +3020,7 @@
         "<h4>Important Note</h4>";
 
       result +=
-        "<p>This dashboard is a preliminary screening tool and should not replace a professional EIA assessment.</p>";
+        "<p>This dashboard is a preliminary screening tool. It does not replace professional environmental assessment, field investigation or regulatory review.</p>";
 
 
       $("analysisResult").innerHTML =
@@ -1810,9 +3062,9 @@
   }
 
 
-  /* =======================================================
-     NETWORK REQUEST
-  ======================================================= */
+  /* =====================================================
+     NETWORK
+  ===================================================== */
 
   async function fetchWithTimeout(
     url,
@@ -1860,9 +3112,9 @@
   }
 
 
-  /* =======================================================
-     OFFLINE QUESTION
-  ======================================================= */
+  /* =====================================================
+     OFFLINE AI ANSWER
+  ===================================================== */
 
   function offlineQuestionAnswer(
     question,
@@ -1913,8 +3165,8 @@
 
 
       return (
-        "An cire bayanan takardar EIA, amma sabis ɗin AI ba ya samuwa a yanzu. " +
-        "Da zarar haɗin AI ya dawo, za a iya samun cikakkiyar amsa bisa takardar."
+        "An ɗora bayanan EIA a cikin workspace, amma sabis ɗin AI ba ya samuwa a yanzu. " +
+        "Da zarar haɗin AI ya dawo, za a iya samun cikakkiyar amsa bisa bayanan EIA."
       );
     }
 
@@ -1924,7 +3176,7 @@
     ) {
 
       return (
-        "The EIA document contains water-related information. " +
+        "The EIA content contains water-related information. " +
         "Review sections discussing surface water, groundwater, drainage, " +
         "water quality, possible contamination and mitigation measures."
       );
@@ -1965,15 +3217,15 @@
 
 
     return (
-      "The EIA document has been extracted successfully, but the AI service " +
+      "The EIA content is loaded successfully, but the AI service " +
       "is currently unavailable. Please try again when the AI server connection is restored."
     );
   }
 
 
-  /* =======================================================
+  /* =====================================================
      ASK AI
-  ======================================================= */
+  ===================================================== */
 
   async function askAI() {
 
@@ -1997,12 +3249,12 @@
 
       safeText(
         $("answerBox"),
-        "Please upload and extract an EIA document first."
+        "Please upload and extract an EIA document or generate a preliminary EIA first."
       );
 
 
       showStatus(
-        "Extract the EIA document before asking AI questions.",
+        "Load an EIA document before asking AI questions.",
         "error"
       );
 
@@ -2236,9 +3488,9 @@
   }
 
 
-  /* =======================================================
+  /* =====================================================
      SAVE EIA
-  ======================================================= */
+  ===================================================== */
 
   function saveEIAResult() {
 
@@ -2253,12 +3505,28 @@
     }
 
 
+    const documentName =
+      documentSource === "generated"
+        ? (
+            generatedProjectName
+              ? generatedProjectName +
+                " — Preliminary AI EIA"
+              : "AI-Generated Preliminary EIA"
+          )
+        : (
+            selectedFile
+              ? selectedFile.name
+              : "EIA Document"
+          );
+
+
     const data = {
 
       document:
-        selectedFile
-          ? selectedFile.name
-          : "EIA Document",
+        documentName,
+
+      source:
+        documentSource,
 
       extractedText:
         extractedText,
@@ -2342,6 +3610,11 @@
         "Saved EIA\n\n" +
         "Document: " +
         data.document +
+        "\n" +
+        "Source: " +
+        (
+          data.source || "unknown"
+        ) +
         "\n\n" +
         "Saved: " +
         new Date(
@@ -2373,9 +3646,9 @@
   }
 
 
-  /* =======================================================
+  /* =====================================================
      VOICE INPUT
-  ======================================================= */
+  ===================================================== */
 
   function startVoiceInput() {
 
@@ -2428,12 +3701,6 @@
         ? $("language").value
         : "English";
 
-
-    /*
-      Chrome/Android may not support Hausa speech
-      recognition consistently. We still request ha-NG,
-      but handle failure gracefully.
-    */
 
     recognition.lang =
       language === "Hausa"
@@ -2577,9 +3844,9 @@
   }
 
 
-  /* =======================================================
+  /* =====================================================
      TEXT TO SPEECH
-  ======================================================= */
+  ===================================================== */
 
   function speakAnswer() {
 
@@ -2629,11 +3896,6 @@
         ? $("language").value
         : "English";
 
-
-    /*
-      Hausa voices are not available on every Android/browser.
-      English is therefore used as a safe fallback.
-    */
 
     utterance.lang =
       language === "Hausa"
@@ -2708,9 +3970,9 @@
   }
 
 
-  /* =======================================================
+  /* =====================================================
      ENTER KEY
-  ======================================================= */
+  ===================================================== */
 
   function handleQuestionKey(
     event
@@ -2728,9 +3990,9 @@
   }
 
 
-  /* =======================================================
+  /* =====================================================
      EVENT BINDING
-  ======================================================= */
+  ===================================================== */
 
   function setupEvents() {
 
@@ -2768,6 +4030,22 @@
 
     const question =
       $("question");
+
+
+    const generateButton =
+      $("generateEIAButton");
+
+    const clearGenerateButton =
+      $("clearGenerateButton");
+
+    const useGeneratedButton =
+      $("useGeneratedButton");
+
+    const copyGeneratedButton =
+      $("copyGeneratedButton");
+
+    const downloadGeneratedButton =
+      $("downloadGeneratedButton");
 
 
     if (!pdfUpload) {
@@ -2910,15 +4188,89 @@
     }
 
 
+    /* ================================================
+       GENERATOR EVENTS
+    ================================================= */
+
+    if (generateButton) {
+
+      generateButton.addEventListener(
+        "click",
+        function (event) {
+
+          event.preventDefault();
+
+          generatePreliminaryEIA();
+        }
+      );
+    }
+
+
+    if (clearGenerateButton) {
+
+      clearGenerateButton.addEventListener(
+        "click",
+        function (event) {
+
+          event.preventDefault();
+
+          clearGenerateForm();
+        }
+      );
+    }
+
+
+    if (useGeneratedButton) {
+
+      useGeneratedButton.addEventListener(
+        "click",
+        function (event) {
+
+          event.preventDefault();
+
+          useGeneratedEIA();
+        }
+      );
+    }
+
+
+    if (copyGeneratedButton) {
+
+      copyGeneratedButton.addEventListener(
+        "click",
+        function (event) {
+
+          event.preventDefault();
+
+          copyGeneratedEIA();
+        }
+      );
+    }
+
+
+    if (downloadGeneratedButton) {
+
+      downloadGeneratedButton.addEventListener(
+        "click",
+        function (event) {
+
+          event.preventDefault();
+
+          downloadGeneratedEIA();
+        }
+      );
+    }
+
+
     console.log(
       "EIA VoiceBridge: all events attached successfully."
     );
   }
 
 
-  /* =======================================================
-     ERROR HANDLING
-  ======================================================= */
+  /* =====================================================
+     GLOBAL ERROR HANDLING
+  ===================================================== */
 
   window.addEventListener(
     "error",
@@ -2948,9 +4300,9 @@
   );
 
 
-  /* =======================================================
+  /* =====================================================
      INITIALISE
-  ======================================================= */
+  ===================================================== */
 
   function initializeApp() {
 
@@ -3009,6 +4361,11 @@
 
 
       console.log(
+        "Preliminary EIA Generator: Ready"
+      );
+
+
+      console.log(
         "EIA VoiceBridge initialised successfully."
       );
 
@@ -3039,11 +4396,6 @@
     }
   }
 
-
-  /*
-    DOM is already near the end of body, but this also
-    protects the application if the browser delays parsing.
-  */
 
   if (
     document.readyState ===
