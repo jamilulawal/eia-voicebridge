@@ -22,7 +22,6 @@ const client = new OpenAI({
 
 app.use(express.static(path.join(__dirname)));
 
-// Homepage
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
@@ -35,7 +34,7 @@ app.get("/health", (req, res) => {
   res.json({
     status: "ok",
     service: "EIA VoiceBridge",
-    version: "2.1"
+    version: "2.2"
   });
 });
 
@@ -45,7 +44,12 @@ app.get("/health", (req, res) => {
 
 app.post("/ask-ai", async (req, res) => {
   try {
-    const { question, documentText } = req.body;
+    // Frontend sends the document as "context"
+    const { question, context, language } = req.body;
+
+    // Convert context into documentText
+    const documentText =
+      typeof context === "string" ? context : "";
 
     if (!question || !question.trim()) {
       return res.status(400).json({
@@ -98,10 +102,12 @@ source for your answer.
 6. Explain difficult environmental concepts using simple language and practical
 examples where appropriate.
 
-7. The user may speak English or Hausa. Answer in the same language used by
-the user.
+7. Answer in the same language used by the user.
 
-8. When appropriate, explain:
+8. The user's language preference is:
+${language || "English"}
+
+9. When appropriate, explain:
    - What the issue is
    - Causes
    - Effects
@@ -109,22 +115,26 @@ the user.
    - Possible solutions
    - Prevention or mitigation measures
 
-9. For environmental projects, explain possible environmental risks,
+10. For environmental projects, explain possible environmental risks,
 benefits, mitigation measures and sustainability considerations.
 
-10. Do not pretend to be a government authority, lawyer, doctor or certified
+11. Do not pretend to be a government authority, lawyer, doctor or certified
 environmental consultant.
 
-11. For current laws, regulations, official standards or information that may
+12. For current laws, regulations, official standards or information that may
 change over time, advise the user to verify with the relevant official source.
 
-12. Keep answers practical and understandable.
+13. Keep answers practical, understandable and useful.
 
 USER QUESTION:
 ${question}
 
 ENVIRONMENTAL DOCUMENT:
-${documentText || "No document was provided. Answer using your environmental knowledge."}
+${
+  documentText
+    ? documentText
+    : "No document was provided. Answer using your environmental knowledge."
+}
 `;
 
     const response = await client.responses.create({
